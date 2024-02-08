@@ -13,6 +13,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include=".gitattributes" />
   </ItemGroup>
 </Project>
