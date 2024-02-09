@@ -9,7 +9,9 @@ void cuda_calculate_histogram(
 	const int height,
 	const int width,
 	const int channels,
-	int* histogram_grayscale
+	int* histogram_r,
+	int* histogram_g,
+	int* histogram_b
 );
 
 #endif // !_CUDA_HISTOGRAM_H_
