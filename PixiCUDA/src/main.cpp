@@ -13,7 +13,7 @@
 * * test - tests files if you write tests (indefinitely you should).
 * * doc - documentation files.
 * */
-
+#define DEG_TO_RAD 0.01745329252f
 #define RED_BOLD "\033[1;31m"
 #define GREEN_BOLD "\033[1;32m"
 #define BLUE_BOLD "\033[1;34m"
@@ -29,7 +29,8 @@
 #include <opencv2/opencv.hpp>
 
 //#include "cualgo/cuda_histogram.h"
-#include "cualgo/negative.cuh"
+//#include "cualgo/negative.cuh"
+#include "cualgo/motion_blur.cuh"
 
 using namespace std;
 using namespace cv;
@@ -37,13 +38,21 @@ namespace fs = filesystem;
 
 typedef chrono::high_resolution_clock::time_point TimeVar;
 
-
 int main(int argc, char** argv)
 {
 	string images_path = R"(C:\Users\megis\VSProjects\PixiCUDA\PixiCUDA\images)";
-	string image_name = R"(ny_times_square.png)";
+	string image_name = R"(ny_ts_cropp_macdonalds.png)";
 
 	fs::path image_path = fs::path(images_path) / image_name;
+
+	//float angle_deg = 45;
+	//int distance = 5;
+	//
+	//float* kernel = new float[(distance * 2 + 1) * (distance * 2 + 1)];
+	//
+	//int grid_kernel_size = fill_k(kernel, angle_deg, distance);
+	//
+	//Mat kernel_image = Mat(distance * 2 + 1, distance * 2 + 1, CV_32F, kernel);
 	
 	cout << "Image path: " << image_path << "\n";
 	if (!fs::exists(image_path))
@@ -58,9 +67,21 @@ int main(int argc, char** argv)
 	cout << "\tImage width: " << image.cols << "\n";
 	cout << "\tImage channels: " << image.channels() << "\n";
 
-	cuda_negative_image(image.data, image.rows, image.cols, image.channels());
-	imwrite("negative_image.png", image);
+	// Motion Blur Image
+	Mat motion_blur_image = image.clone();
+	cuda_motion_blur_image(
+		image.data,
+		motion_blur_image.data,
+		45.5,
+		100,
+		image.rows,
+		image.cols,
+		image.channels()
+	);
+	imwrite("motion_blur_image.png", motion_blur_image);
 
+	//cuda_negative_image(image.data, image.rows, image.cols, image.channels());
+	//imwrite("negative_image.png", image);
 	//int histogram_r[256] = { 0 };
 	//int histogram_g[256] = { 0 };
 	//int histogram_b[256] = { 0 };
