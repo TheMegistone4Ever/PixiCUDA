@@ -28,7 +28,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 
-#include "cualgo/cuda_histogram.h"
+//#include "cualgo/cuda_histogram.h"
+#include "cualgo/negative.cuh"
 
 using namespace std;
 using namespace cv;
@@ -57,35 +58,38 @@ int main(int argc, char** argv)
 	cout << "\tImage width: " << image.cols << "\n";
 	cout << "\tImage channels: " << image.channels() << "\n";
 
-	int histogram_r[256] = { 0 };
-	int histogram_g[256] = { 0 };
-	int histogram_b[256] = { 0 };
+	cuda_negative_image(image.data, image.rows, image.cols, image.channels());
+	imwrite("negative_image.png", image);
 
-	cuda_calculate_histogram(image.data, image.rows, image.cols, image.channels(), histogram_r, histogram_g, histogram_b);
-	
-	int total_pixels = image.rows * image.cols;
-	int total_pixels_histogram = 0;
-
-	cout << "histogram: \n";
-	cout << "value\tR\tG\tB\n" << "—\t—\t—\t—\n";
-	for (int i = 0; i < sizeof(histogram_r) / sizeof(histogram_r[0]); i++)
-	{
-		cout << i << ":";
-		cout << "\t|" << RED_BOLD << histogram_r[i] << RESET_COLOR;
-		cout << "\t|" << GREEN_BOLD << histogram_g[i] << RESET_COLOR;
-		cout << "\t|" << BLUE_BOLD << histogram_b[i] << RESET_COLOR;
-		cout << "\n";
-		total_pixels_histogram += histogram_r[i] + histogram_g[i] + histogram_b[i];
-	}
-	total_pixels_histogram /= image.channels();
-
-	cout << "Total pixels: " << total_pixels << "\n";
-	cout << "Total pixels histogram: " << total_pixels_histogram << "\n";
-	cout << "Remaining pixels: " << total_pixels - total_pixels_histogram << "\n";
-
-	//imshow("Original Image", image);
-	//waitKey(0);
-	//destroyAllWindows();
+	//int histogram_r[256] = { 0 };
+	//int histogram_g[256] = { 0 };
+	//int histogram_b[256] = { 0 };
+	//
+	//cuda_calculate_histogram(image.data, image.rows, image.cols, image.channels(), histogram_r, histogram_g, histogram_b);
+	//
+	//int total_pixels = image.rows * image.cols;
+	//int total_pixels_histogram = 0;
+	//
+	//cout << "histogram: \n";
+	//cout << "value\tR\tG\tB\n" << "—\t—\t—\t—\n";
+	//for (int i = 0; i < sizeof(histogram_r) / sizeof(histogram_r[0]); i++)
+	//{
+	//	cout << i << ":";
+	//	cout << "\t|" << RED_BOLD << histogram_r[i] << RESET_COLOR;
+	//	cout << "\t|" << GREEN_BOLD << histogram_g[i] << RESET_COLOR;
+	//	cout << "\t|" << BLUE_BOLD << histogram_b[i] << RESET_COLOR;
+	//	cout << "\n";
+	//	total_pixels_histogram += histogram_r[i] + histogram_g[i] + histogram_b[i];
+	//}
+	//total_pixels_histogram /= image.channels();
+	//
+	//cout << "Total pixels: " << total_pixels << "\n";
+	//cout << "Total pixels histogram: " << total_pixels_histogram << "\n";
+	//cout << "Remaining pixels: " << total_pixels - total_pixels_histogram << "\n";
+	//
+	////imshow("Original Image", image);
+	////waitKey(0);
+	////destroyAllWindows();
 
 	return 0;
 }

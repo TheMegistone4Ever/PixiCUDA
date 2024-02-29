@@ -100,6 +100,7 @@ copy /Y "$(OPENCV_DIR)\bin\opencv_imgproc490.dll" "$(TargetDir)"
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cualgo\intellisense\intellisense_cuda_intrinsics.hpp" />
+    <ClInclude Include="include\cualgo\negative.cuh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
