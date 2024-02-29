@@ -40,7 +40,7 @@ typedef chrono::high_resolution_clock::time_point TimeVar;
 int main(int argc, char** argv)
 {
 	string images_path = R"(C:\Users\megis\VSProjects\PixiCUDA\PixiCUDA\images)";
-	string image_name = R"(ny_ts_cropp_macdonalds.png)";
+	string image_name = R"(ny_times_square.png)";
 
 	fs::path image_path = fs::path(images_path) / image_name;
 	
@@ -63,6 +63,9 @@ int main(int argc, char** argv)
 
 	cuda_calculate_histogram(image.data, image.rows, image.cols, image.channels(), histogram_r, histogram_g, histogram_b);
 	
+	int total_pixels = image.rows * image.cols;
+	int total_pixels_histogram = 0;
+
 	cout << "histogram: \n";
 	cout << "value\tR\tG\tB\n" << "—\t—\t—\t—\n";
 	for (int i = 0; i < sizeof(histogram_r) / sizeof(histogram_r[0]); i++)
@@ -72,11 +75,17 @@ int main(int argc, char** argv)
 		cout << "\t|" << GREEN_BOLD << histogram_g[i] << RESET_COLOR;
 		cout << "\t|" << BLUE_BOLD << histogram_b[i] << RESET_COLOR;
 		cout << "\n";
+		total_pixels_histogram += histogram_r[i] + histogram_g[i] + histogram_b[i];
 	}
+	total_pixels_histogram /= image.channels();
 
-	imshow("Original Image", image);
-	waitKey(0);
-	destroyAllWindows();
+	cout << "Total pixels: " << total_pixels << "\n";
+	cout << "Total pixels histogram: " << total_pixels_histogram << "\n";
+	cout << "Remaining pixels: " << total_pixels - total_pixels_histogram << "\n";
+
+	//imshow("Original Image", image);
+	//waitKey(0);
+	//destroyAllWindows();
 
 	return 0;
 }

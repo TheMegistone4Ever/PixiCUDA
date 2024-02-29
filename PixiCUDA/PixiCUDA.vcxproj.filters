@@ -14,4 +14,7 @@
   <ItemGroup>
     <None Include=".gitignore" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\cualgo\intellisense\intellisense_cuda_intrinsics.hpp" />
+  </ItemGroup>
 </Project>

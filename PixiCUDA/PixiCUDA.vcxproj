@@ -78,7 +78,7 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <CodeGeneration>compute_52,sm_52</CodeGeneration>
+      <CodeGeneration>compute_60,sm_60</CodeGeneration>
     </CudaCompile>
     <PreBuildEvent>
       <Command>copy /Y "$(OPENCV_DIR)\bin\opencv_core490.dll" "$(TargetDir)"
@@ -97,7 +97,9 @@ copy /Y "$(OPENCV_DIR)\bin\opencv_imgproc490.dll" "$(TargetDir)"
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\cualgo\intellisense\intellisense_cuda_intrinsics.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
