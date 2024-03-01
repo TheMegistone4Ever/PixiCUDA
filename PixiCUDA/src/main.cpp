@@ -15,11 +15,11 @@
 * */
 
 #define MAX_DISTANCE (MAX_KERNEL_SIZE / 2 - 1)
-constexpr unsigned short MAX_ANGLE_DEG = 360;
 constexpr unsigned char ESC_KEY = 27;
 constexpr unsigned char WAIT_TIME = 50;
 constexpr unsigned short WIN_WIDTH = 1280;
 constexpr unsigned short WIN_HEIGHT = 720;
+constexpr unsigned short MAX_ANGLE_DEG = 360;
 
 #include <iostream>
 #include <chrono>
