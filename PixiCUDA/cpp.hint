@@ -1,4 +1,11 @@
 // Hint files help the Visual Studio IDE interpret Visual C++ identifiers
 // such as names of functions and macros.
 // For more information see https://go.microsoft.com/fwlink/?linkid=865984
+
+#define __constant__ __location__(constant)
+#define __host__ __location__(host)
+#define __device__ __location__(device)
 #define __global__ __location__(global)
+
+#define MAX_DISTANCE (MAX_KERNEL_SIZE / 2 - 1)
+#define BIT_VECTOR_SIZE (MAX_KERNEL_SIZE * MAX_KERNEL_SIZE / BYTE_SIZE + (MAX_KERNEL_SIZE * MAX_KERNEL_SIZE % BYTE_SIZE != 0))

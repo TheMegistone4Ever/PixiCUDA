@@ -97,14 +97,11 @@ copy /Y "$(OPENCV_DIR)\bin\opencv_imgproc490.dll" "$(TargetDir)"
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cualgo\intellisense\intellisense_cuda_intrinsics.hpp" />
     <ClInclude Include="include\cualgo\motion_blur.cuh" />
-    <ClInclude Include="include\cualgo\negative.cuh" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\..\PycharmProjects\MotionBlurDemo\images\test.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
