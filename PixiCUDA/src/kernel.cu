@@ -3,6 +3,8 @@
 #include <device_launch_parameters.h>
 #include "cualgo/motion_blur.cuh"
 
+#include <stdio.h>
+
 #ifdef __INTELLISENSE__
 #include "cualgo/intellisense/intellisense_cuda_intrinsics.hpp"
 #endif
@@ -13,11 +15,13 @@
 __global__ void motion_blur_cuda(
 	const unsigned char* in_image,
 	unsigned char* out_image,
-	const float* kernel,
+	const unsigned char* kernel,
 	const int kernel_size,
 	const int channels,
 	const int height,
-	const int width
+	const int width,
+	const float angle_deg,
+	const int distance
 );
 
 void cuda_motion_blur_image(
@@ -35,21 +39,35 @@ void cuda_motion_blur_image(
 	// Create the kernel and fill it with the correct values
 
 	float angle_rad = angle_deg * DEG_TO_RAD;
+	
+	int kernel_size = distance * 2 + 1; // +1 to include the center pixel
+	int grid_kernel_size = kernel_size * kernel_size;
+	//size_t kernel_size = grid_kernel_size * sizeof(float);
 
-	int size = distance * 2 + 1; // +1 to include the center pixel
-	int grid_kernel_size = size * size;
-	size_t kernel_size = grid_kernel_size * sizeof(float);
+	unsigned char* kernel = new unsigned char[grid_kernel_size] { 0 };
 
-	float* kernel = new float[grid_kernel_size];
-
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < kernel_size; i++) {
 		int x = distance + int(i * cos(angle_rad));
 		int y = distance + int(i * sin(angle_rad));
-		if (x < 0 || x >= size || y < 0 || y >= size) {
+		if (x < 0 || x >= kernel_size || y < 0 || y >= kernel_size) {
 			break;
 		}
-		kernel[y * size + x] = 1. / (distance + 1);
+		kernel[y * kernel_size + x] = 1;
 	}
+
+	// Printf the kernel
+	//printf("Kernel:\n");
+	//for (int i = 0; i < grid_kernel_size; i++) {
+	//	if (kernel[i] > 0) {
+	//		printf("X ");
+	//	}
+	//	else {
+	//		printf("  ");
+	//	}
+	//	if ((i + 1) % kernel_size == 0) {
+	//		printf("\n");
+	//	}
+	//}
 
 	// Allocate CUDA variable memory on the device
 	unsigned char* device_in_image = nullptr;
@@ -64,7 +82,7 @@ void cuda_motion_blur_image(
 
 	// Kernel launch
 	dim3 grid_image(width, height);
-	motion_blur_cuda << <grid_image, 1 >> > (device_in_image, device_out_image, kernel, kernel_size, channels, height, width);
+	motion_blur_cuda << <grid_image, 1 >> > (device_in_image, device_out_image, kernel, kernel_size, channels, height, width, angle_deg, distance);
 
 	// Copy the device variables to the host (GPU -> CPU)
 	cudaMemcpy(out_image, device_out_image, image_size, cudaMemcpyDeviceToHost);
@@ -77,33 +95,61 @@ void cuda_motion_blur_image(
 __global__ void motion_blur_cuda(
 	const unsigned char* in_image,
 	unsigned char* out_image,
-	const float* kernel,
+	const unsigned char* kernel,
 	const int kernel_size,
 	const int channels,
 	const int height,
-	const int width
+	const int width,
+	const float angle_deg,
+	const int distance
 ) {
-	// Get the position of the pixel
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockIdx.y * blockDim.y + threadIdx.y;
-	int index = (x + y * gridDim.x) * channels;
+	int index = (x + y * width) * channels;
 
-	// Apply the motion blur to the pixel
+	int grid_kernel_size = kernel_size * kernel_size;
+	float angle_rad = angle_deg * DEG_TO_RAD;
+	unsigned char* kernel = new unsigned char[grid_kernel_size] { 0 };
+	for (int i = 0; i < kernel_size; i++) {
+		int x = distance + int(i * cos(angle_rad));
+		int y = distance + int(i * sin(angle_rad));
+		if (x < 0 || x >= kernel_size || y < 0 || y >= kernel_size) {
+			break;
+		}
+		kernel[y * kernel_size + x] = 1;
+	}
+
 	if (x < width && y < height) {
+		int start_kernel_x = x - kernel_size / 2;
+		int start_kernel_y = y - kernel_size / 2;
+		
 		for (int channel = 0; channel < channels; channel++) {
-			float sum = 0;
-			for (int i = 0; i < kernel_size; i++) {
-				int x_kernel = i % kernel_size;
-				int y_kernel = i / kernel_size;
-				int x_image = x + x_kernel - kernel_size / 2;
-				int y_image = y + y_kernel - kernel_size / 2;
-				if (x_image >= 0 && x_image < width && y_image >= 0 && y_image < height) {
-					atomicAdd(&sum, in_image[(x_image + y_image * width) * channels + channel] * kernel[i]);
+			long channel_sum = 0;
+			for (int x_kernel = start_kernel_x; x_kernel < start_kernel_x + kernel_size; x_kernel++) {
+				if (x_kernel < 0 || x_kernel >= width) {
+					continue;
+				}
+
+				for (int y_kernel = start_kernel_y; y_kernel < start_kernel_y + kernel_size; y_kernel++) {
+					if (y_kernel < 0 || y_kernel >= height) {
+						continue;
+					}
+					
+					unsigned char pixel = in_image[(x_kernel + y_kernel * width) * channels + channel];
+
+					int kernel_index = (x_kernel - start_kernel_x) + (y_kernel - start_kernel_y) * kernel_size;
+					unsigned char kernel_value = kernel[(x_kernel - start_kernel_x) + (y_kernel - start_kernel_y) * kernel_size];
+
+					if (kernel_value > 0) {
+						channel_sum += pixel;
+					}
 				}
 			}
-			out_image[index + channel] = (int)sum;
+			out_image[index + channel] = channel_sum / (distance + 1);
 		}
 	}
+
+	delete[] kernel;
 }
 
 //__global__ void negative_cuda(

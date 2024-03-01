@@ -72,13 +72,16 @@ int main(int argc, char** argv)
 	cuda_motion_blur_image(
 		image.data,
 		motion_blur_image.data,
-		45.5,
-		100,
+		30.5,
+		20,
 		image.rows,
 		image.cols,
 		image.channels()
 	);
 	imwrite("motion_blur_image.png", motion_blur_image);
+	imshow("Motion Blur Image", motion_blur_image);
+	waitKey(0);
+	destroyAllWindows();
 
 	//cuda_negative_image(image.data, image.rows, image.cols, image.channels());
 	//imwrite("negative_image.png", image);
