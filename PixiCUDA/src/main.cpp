@@ -1,21 +1,6 @@
-/**
-* @file main.cpp
-* * @brief Main file for the PixiCUDA project.
-* * @date 2024-02-09
-* * 
-* * src/ (source for the application)
-* * include/ (interface for the library *.h)
-* * tests/ (main.cpp for quick tests) <- use cppunit for this part
-* * doc/ (doxygen or any kind of documentation)
-* *
-* * include - PUBLIC header files (.h files).
-* * src - PRIVATE source files (.h, .cpp and .m files).
-* * test - tests files if you write tests (indefinitely you should).
-* * doc - documentation files.
-* */
-
 #define MAX_DISTANCE (MAX_KERNEL_SIZE / 2 - 1)
 constexpr unsigned char ESC_KEY = 27;
+constexpr unsigned char Q_KEY = 113;
 constexpr unsigned char WAIT_TIME = 50;
 constexpr unsigned short WIN_WIDTH = 1280;
 constexpr unsigned short WIN_HEIGHT = 720;
@@ -82,8 +67,8 @@ int main(int argc, char** argv)
     // Motion Blur Image
     Mat motion_blur_image = image.clone();
     Mat stacked_image;
-    hconcat(image, motion_blur_image, stacked_image);
-    imshow("Motion Blur", stacked_image);
+    //hconcat(image, motion_blur_image, stacked_image);
+    //imshow("Motion Blur", stacked_image);
 
     // Loop to handle events
     while (true)
@@ -101,13 +86,15 @@ int main(int argc, char** argv)
         imshow("Motion Blur", stacked_image);
 
         char key = waitKey(WAIT_TIME);
-        if (key == ESC_KEY)
+        if (key == ESC_KEY || key == Q_KEY)
         {
             break;
         }    
     }
 
     destroyAllWindows();
+
+    imwrite("motion_blur_image.png", motion_blur_image);
 
     return 0;
 }

@@ -1,28 +1,22 @@
-﻿#include <cuda_runtime.h>
-#include <crt/math_functions.hpp>
-#include <device_launch_parameters.h>
-#include "cualgo/motion_blur.cuh"
-
-#include <stdio.h>
-
-#ifdef __INTELLISENSE__
-#include "cualgo/intellisense/intellisense_cuda_intrinsics.hpp"
+﻿#ifdef __INTELLISENSE__
+    #define CUDA_KERNEL(...)
+    #define FAKEINIT = { 0 }
+    #define __CUDACC__
+#else
+    #define CUDA_KERNEL(...) <<< __VA_ARGS__ >>>
+    #define FAKEINIT
 #endif // __INTELLISENSE__
 
-constexpr auto BYTE_SIZE = 8;
+#include <stdio.h>
+#include <cuda_runtime.h>
+#include <device_launch_parameters.h>
+
+#include "cualgo/motion_blur.cuh"
+
+constexpr unsigned char BYTE_SIZE = 8;
 #define BIT_VECTOR_SIZE (MAX_KERNEL_SIZE * MAX_KERNEL_SIZE / BYTE_SIZE + (MAX_KERNEL_SIZE * MAX_KERNEL_SIZE % BYTE_SIZE != 0))
 
-__constant__ unsigned char device_kernel[BIT_VECTOR_SIZE] = { 0 };
-
-__host__ void setBit(unsigned char* bvec, const int index)
-{
-    bvec[index / BYTE_SIZE] |= 1 << (index % BYTE_SIZE);
-}
-
-__device__ bool testBit(const unsigned char* bvec, const int index)
-{
-    return bvec[index / BYTE_SIZE] & (1 << (index % BYTE_SIZE));
-}
+__constant__ unsigned char device_kernel[BIT_VECTOR_SIZE] FAKEINIT;
 
 __global__ void motion_blur_cuda(
     const unsigned char* in_image,
@@ -33,6 +27,16 @@ __global__ void motion_blur_cuda(
     const int width,
     const float angle_deg,
     const int distance
+);
+
+__host__ void setBit(
+    unsigned char* bit_vec,
+    const int index
+);
+
+__device__ bool testBit(
+    const unsigned char* bit_vec,
+    const int index
 );
 
 void cuda_motion_blur_image(
@@ -57,6 +61,7 @@ void cuda_motion_blur_image(
     {
         int x = distance + int(i * cos(angle_rad));
         int y = distance + int(i * sin(angle_rad));
+
         if (x >= 0 && x < kernel_size && y >= 0 && y < kernel_size)
         {
             setBit(host_kernel, y * kernel_size + x);
@@ -79,7 +84,16 @@ void cuda_motion_blur_image(
 
     // Kernel launch
     dim3 grid_image(width, height);
-    motion_blur_cuda << <grid_image, 1 >> > (device_in_image, device_out_image, kernel_size, channels, height, width, angle_deg, distance);
+    motion_blur_cuda <<<grid_image, 1>>> (
+        device_in_image,
+        device_out_image,
+        kernel_size,
+        channels,
+        height,
+        width,
+        angle_deg,
+        distance
+    );
 
     // Copy the device variables to the host (GPU -> CPU)
     cudaMemcpy(out_image, device_out_image, image_size, cudaMemcpyDeviceToHost);
@@ -104,40 +118,60 @@ __global__ void motion_blur_cuda(
     int y = blockIdx.y * blockDim.y + threadIdx.y;
     int index = (x + y * width) * channels;
 
-    if (x < width && y < height)
-    {
-        int start_kernel_x = x - kernel_size / 2;
-        int start_kernel_y = y - kernel_size / 2;
+    if (x >= width || y >= height)
+	{
+		return;
+	}
 
-        for (int channel = 0; channel < channels; channel++)
+    int start_kernel_x = x - kernel_size / 2;
+    int start_kernel_y = y - kernel_size / 2;
+
+    for (int channel = 0; channel < channels; channel++)
+    {
+        unsigned int channel_sum = 0;
+
+        for (int x_kernel = start_kernel_x; x_kernel < start_kernel_x + kernel_size; x_kernel++)
         {
-            double channel_sum = 0;
-            for (int x_kernel = start_kernel_x; x_kernel < start_kernel_x + kernel_size; x_kernel++)
+            if (x_kernel < 0 || x_kernel >= width)
             {
-                if (x_kernel < 0 || x_kernel >= width)
+                continue;
+            }
+
+            for (int y_kernel = start_kernel_y; y_kernel < start_kernel_y + kernel_size; y_kernel++)
+            {
+                if (y_kernel < 0 || y_kernel >= height)
                 {
                     continue;
                 }
 
-                for (int y_kernel = start_kernel_y; y_kernel < start_kernel_y + kernel_size; y_kernel++)
+                unsigned char pixel = in_image[(x_kernel + y_kernel * width) * channels + channel];
+
+                int kernel_index = (x_kernel - start_kernel_x) + (y_kernel - start_kernel_y) * kernel_size;
+                unsigned char kernel_value = testBit(device_kernel, kernel_index);
+
+                if (kernel_value)
                 {
-                    if (y_kernel < 0 || y_kernel >= height)
-                    {
-                        continue;
-                    }
-
-                    unsigned char pixel = in_image[(x_kernel + y_kernel * width) * channels + channel];
-
-                    int kernel_index = (x_kernel - start_kernel_x) + (y_kernel - start_kernel_y) * kernel_size;
-                    unsigned char kernel_value = testBit(device_kernel, kernel_index);
-
-                    if (kernel_value)
-                    {
-                        channel_sum += static_cast<double>(pixel) / (distance + 1);
-                    }
+                    channel_sum += pixel;
                 }
             }
-            out_image[index + channel] = static_cast<unsigned char>(channel_sum);
         }
+
+        out_image[index + channel] = channel_sum / (distance + 1.);
     }
+}
+
+__host__ void setBit(
+    unsigned char* bit_vec,
+    const int index
+)
+{
+    bit_vec[index / BYTE_SIZE] |= 1 << (index % BYTE_SIZE);
+}
+
+__device__ bool testBit(
+    const unsigned char* bit_vec,
+    const int index
+)
+{
+    return bit_vec[index / BYTE_SIZE] & (1 << (index % BYTE_SIZE));
 }

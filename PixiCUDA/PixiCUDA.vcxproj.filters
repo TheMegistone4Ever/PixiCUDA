@@ -16,7 +16,6 @@
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\cualgo\intellisense\intellisense_cuda_intrinsics.hpp" />
     <ClInclude Include="include\cualgo\motion_blur.cuh" />
   </ItemGroup>
 </Project>
