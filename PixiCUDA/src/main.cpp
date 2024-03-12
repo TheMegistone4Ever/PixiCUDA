@@ -42,9 +42,9 @@ int main(int argc, char** argv)
     Mat image = imread(image_path.string());
 
     // Image properties
-    cout << "\tImage height: " << image.rows << "\n";
-    cout << "\tImage width: " << image.cols << "\n";
-    cout << "\tImage channels: " << image.channels() << "\n";
+    cout << "\t- Image height: " << image.rows << "\n";
+    cout << "\t- Image width: " << image.cols << "\n";
+    cout << "\t- Image channels: " << image.channels() << "\n";
 
     float angle_deg = .0f;
     unsigned int distance = 0;
