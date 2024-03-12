@@ -41,7 +41,7 @@ void cpu_motion_blur_image(
 	int ones = 0;
 
 	memset(kernel, NULL, static_cast<size_t>(kernel_size * kernel_size / BYTE_SIZE + 1));
-	for (int i = 0; i < kernel_size; i++)
+	for (int i = 0; i < kernel_size; ++i)
 	{
 		int x = distance + int(i * cos(angle_rad));
 		int y = distance + int(i * sin(angle_rad));
@@ -54,7 +54,7 @@ void cpu_motion_blur_image(
 
 		if (!test_bit_cpu(kernel, index)) {
 			set_bit_cpu(kernel, index);
-			ones++;
+			++ones;
 		}
 	}
 
@@ -82,26 +82,26 @@ void motion_blur_cpu(
 	const size_t image_size = static_cast<size_t>(height) * width * channels * sizeof(unsigned char);
 	memset(out_image, NULL, image_size);
 
-	for (int x = 0; x < width; x++)
+	for (int x = 0; x < width; ++x)
 	{
-		for (int y = 0; y < height; y++)
+		for (int y = 0; y < height; ++y)
 		{
 			int start_kernel_x = x - kernel_size / 2;
 			int start_kernel_y = y - kernel_size / 2;
 			int index = (x + y * width) * channels;
 
-			for (int channel = 0; channel < channels; channel++)
+			for (int channel = 0; channel < channels; ++channel)
 			{
 				unsigned int channel_sum = 0;
 
-				for (int x_kernel = start_kernel_x; x_kernel < start_kernel_x + kernel_size; x_kernel++)
+				for (int x_kernel = start_kernel_x; x_kernel < start_kernel_x + kernel_size; ++x_kernel)
 				{
 					if (x_kernel < 0 || x_kernel >= width)
 					{
 						continue;
 					}
 
-					for (int y_kernel = start_kernel_y; y_kernel < start_kernel_y + kernel_size; y_kernel++)
+					for (int y_kernel = start_kernel_y; y_kernel < start_kernel_y + kernel_size; ++y_kernel)
 					{
 						if (y_kernel < 0 || y_kernel >= height)
 						{

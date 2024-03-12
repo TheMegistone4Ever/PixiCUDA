@@ -59,7 +59,7 @@ void cuda_motion_blur_image(
     unsigned char* host_kernel = new unsigned char[BIT_VECTOR_SIZE] { 0 };
     int ones = 0;
     
-    for (int i = 0; i < kernel_size; i++)
+    for (int i = 0; i < kernel_size; ++i)
     {
         int x = distance + int(i * cos(angle_rad));
         int y = distance + int(i * sin(angle_rad));
@@ -72,7 +72,7 @@ void cuda_motion_blur_image(
 
         if (!test_bit_cuda_host(host_kernel, index)) {
 			set_bit_cuda(host_kernel, index);
-			ones++;
+            ++ones;
 		}
     }
 
@@ -132,18 +132,18 @@ __global__ void motion_blur_cuda(
     int start_kernel_y = y - kernel_size / 2;
     int index = (x + y * width) * channels;
 
-    for (int channel = 0; channel < channels; channel++)
+    for (int channel = 0; channel < channels; ++channel)
     {
         unsigned int channel_sum = 0;
 
-        for (int x_kernel = start_kernel_x; x_kernel < start_kernel_x + kernel_size; x_kernel++)
+        for (int x_kernel = start_kernel_x; x_kernel < start_kernel_x + kernel_size; ++x_kernel)
         {
             if (x_kernel < 0 || x_kernel >= width)
             {
                 continue;
             }
 
-            for (int y_kernel = start_kernel_y; y_kernel < start_kernel_y + kernel_size; y_kernel++)
+            for (int y_kernel = start_kernel_y; y_kernel < start_kernel_y + kernel_size; ++y_kernel)
             {
                 if (y_kernel < 0 || y_kernel >= height)
                 {
