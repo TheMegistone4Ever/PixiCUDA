@@ -97,6 +97,8 @@ copy /Y "$(OPENCV_DIR)\bin\opencv_imgproc490.dll" "$(TargetDir)"
     <ClCompile Include="src\source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\.gitattributes" />
+    <None Include="..\README.md" />
     <None Include=".gitignore" />
     <None Include="cpp.hint" />
   </ItemGroup>
