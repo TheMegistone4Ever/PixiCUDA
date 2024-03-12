@@ -19,19 +19,23 @@ __global__ void motion_blur_cuda(
     const unsigned char* in_image,
     unsigned char* out_image,
     const int kernel_size,
-    const int channels,
+    const int ones,
     const int height,
     const int width,
-    const float angle_deg,
-    const int distance
+    const int channels
 );
 
-__host__ void setBit(
+__host__ void set_bit_cuda(
     unsigned char* bit_vec,
     const int index
 );
 
-__device__ bool testBit(
+__device__ bool test_bit_cuda_device(
+    const unsigned char* bit_vec,
+    const int index
+);
+
+__host__ bool test_bit_cuda_host(
     const unsigned char* bit_vec,
     const int index
 );
@@ -47,26 +51,29 @@ void cuda_motion_blur_image(
 )
 {
     // Calculate the size of the image
-    const size_t image_size = height * width * channels * sizeof(unsigned char);
+    const size_t image_size = static_cast<size_t>(height) * width * channels * sizeof(unsigned char);
 
     // Create the kernel and fill it with the correct values
     float angle_rad = angle_deg * DEG_TO_RAD;
     int kernel_size = distance * 2 + 1; // +1 to include the center pixel
     unsigned char* host_kernel = new unsigned char[BIT_VECTOR_SIZE] { 0 };
-
+    int ones = 0;
+    
     for (int i = 0; i < kernel_size; i++)
     {
         int x = distance + int(i * cos(angle_rad));
         int y = distance + int(i * sin(angle_rad));
+        int index = y * kernel_size + x;
 
-        if (x >= 0 && x < kernel_size && y >= 0 && y < kernel_size)
+        if (x < 0 || x >= kernel_size || y < 0 || y >= kernel_size)
         {
-            setBit(host_kernel, y * kernel_size + x);
-        }
-        else
-        {
-            break;
-        }
+			break;
+		}
+
+        if (!test_bit_cuda_host(host_kernel, index)) {
+			set_bit_cuda(host_kernel, index);
+			ones++;
+		}
     }
 
     // Copy the host kernel data to the device constant memory
@@ -89,11 +96,10 @@ void cuda_motion_blur_image(
         device_in_image,
         device_out_image,
         kernel_size,
-        channels,
+        ones,
         height,
         width,
-        angle_deg,
-        distance
+        channels
     );
 
     // Copy the device variables to the host (GPU -> CPU)
@@ -108,11 +114,10 @@ __global__ void motion_blur_cuda(
     const unsigned char* in_image,
     unsigned char* out_image,
     const int kernel_size,
-    const int channels,
+    const int ones,
     const int height,
     const int width,
-    const float angle_deg,
-    const int distance
+    const int channels
 )
 {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -148,7 +153,7 @@ __global__ void motion_blur_cuda(
                 unsigned char pixel = in_image[(x_kernel + y_kernel * width) * channels + channel];
 
                 int kernel_index = (x_kernel - start_kernel_x) + (y_kernel - start_kernel_y) * kernel_size;
-                unsigned char kernel_value = testBit(device_kernel, kernel_index);
+                unsigned char kernel_value = test_bit_cuda_device(device_kernel, kernel_index);
 
                 if (kernel_value)
                 {
@@ -157,11 +162,11 @@ __global__ void motion_blur_cuda(
             }
         }
 
-        out_image[index + channel] = channel_sum / (distance + 1.);
+        out_image[index + channel] = channel_sum / ones;
     }
 }
 
-__host__ void setBit(
+__host__ void set_bit_cuda(
     unsigned char* bit_vec,
     const int index
 )
@@ -169,7 +174,15 @@ __host__ void setBit(
     bit_vec[index / BYTE_SIZE] |= 1 << (index % BYTE_SIZE);
 }
 
-__device__ bool testBit(
+__device__ bool test_bit_cuda_device(
+    const unsigned char* bit_vec,
+    const int index
+)
+{
+    return bit_vec[index / BYTE_SIZE] & (1 << (index % BYTE_SIZE));
+}
+
+__host__ bool test_bit_cuda_host(
     const unsigned char* bit_vec,
     const int index
 )

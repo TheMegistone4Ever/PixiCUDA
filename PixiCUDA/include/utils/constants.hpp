@@ -5,7 +5,7 @@
 
 constexpr unsigned short MAX_KERNEL_SIZE = 724;
 constexpr unsigned char BYTE_SIZE = 8;
-constexpr float DEG_TO_RAD = .017453293;
+constexpr float DEG_TO_RAD = .017453293f;
 constexpr unsigned char ESC_KEY = 27;
 constexpr unsigned char Q_KEY = 113;
 constexpr unsigned char WAIT_TIME = 50;

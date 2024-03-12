@@ -29,7 +29,7 @@ static void onTrackbarDistance(int distance, void* userdata)
 int main(int argc, char** argv)
 {
     string images_path = R"(C:\Users\megis\VSProjects\PixiCUDA\PixiCUDA\images)";
-    string image_name = "ny_times_square.png";
+    string image_name = "ny_ts_cropp_macdonalds.png";
 
     fs::path image_path = fs::path(images_path) / image_name;
 
@@ -71,20 +71,19 @@ int main(int argc, char** argv)
         {
             break;
         }
-
-        // Check if parameters have changed
+        
         if (prev_angle_deg != angle_deg || prev_distance != distance)
         {
             timevar start = chrono::high_resolution_clock::now();
-            /*cuda_motion_blur_image(
-                image.data,
-                motion_blur_image.data,
-                angle_deg,
-                distance,
-                image.rows,
-                image.cols,
-                image.channels()
-            );*/
+            //cuda_motion_blur_image(
+            //    image.data,
+            //    motion_blur_image.data,
+            //    angle_deg,
+            //    distance,
+            //    image.rows,
+            //    image.cols,
+            //    image.channels()
+            //);
             cpu_motion_blur_image(
                 image.data,
                 motion_blur_image.data,

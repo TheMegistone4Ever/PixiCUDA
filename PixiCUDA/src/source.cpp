@@ -2,7 +2,6 @@
 
 #include "cpualgo/motion_blur.hpp"
 #include "utils/constants.hpp"
-#include <iostream>
 
 unsigned char kernel[BIT_VECTOR_SIZE] = { 0 };
 
@@ -10,19 +9,18 @@ void motion_blur_cpu(
 	const unsigned char* in_image,
 	unsigned char* out_image,
 	const int kernel_size,
-	const float angle_deg,
-	const int distance,
+	const int ones,
 	const int height,
 	const int width,
 	const int channels
 );
 
-void setBitCpu(
+void set_bit_cpu(
 	unsigned char* bit_vec,
 	const int index
 );
 
-bool testBitCpu(
+bool test_bit_cpu(
 	const unsigned char* bit_vec,
 	const int index
 );
@@ -40,38 +38,31 @@ void cpu_motion_blur_image(
 	// Create the kernel and fill it with the correct values
 	float angle_rad = angle_deg * DEG_TO_RAD;
 	int kernel_size = distance * 2 + 1; // +1 to include the center pixel
+	int ones = 0;
 
+	memset(kernel, NULL, static_cast<size_t>(kernel_size * kernel_size / BYTE_SIZE + 1));
 	for (int i = 0; i < kernel_size; i++)
 	{
 		int x = distance + int(i * cos(angle_rad));
 		int y = distance + int(i * sin(angle_rad));
+		int index = y * kernel_size + x;
 
-		if (x >= 0 && x < kernel_size && y >= 0 && y < kernel_size)
-		{
-			setBitCpu(kernel, y * kernel_size + x);
-		}
-		else
+		if (x < 0 || x >= kernel_size || y < 0 || y >= kernel_size)
 		{
 			break;
 		}
-	}
 
-	// Print kernel in nice format
-	for (int i = 0; i < kernel_size; i++)
-	{
-		for (int j = 0; j < kernel_size; j++)
-		{
-			std::cout << testBitCpu(kernel, i * kernel_size + j) << " ";
+		if (!test_bit_cpu(kernel, index)) {
+			set_bit_cpu(kernel, index);
+			ones++;
 		}
-		std::cout << std::endl;
 	}
 
 	motion_blur_cpu(
 		in_image,
 		out_image,
 		kernel_size,
-		angle_deg,
-		distance,
+		ones,
 		height,
 		width,
 		channels
@@ -82,14 +73,13 @@ void motion_blur_cpu(
 	const unsigned char* in_image,
 	unsigned char* out_image,
 	const int kernel_size,
-	const float angle_deg,
-	const int distance,
+	const int ones,
 	const int height,
 	const int width,
 	const int channels
 )
 {
-	const size_t image_size = height * width * channels * sizeof(unsigned char);
+	const size_t image_size = static_cast<size_t>(height) * width * channels * sizeof(unsigned char);
 	memset(out_image, NULL, image_size);
 
 	for (int x = 0; x < width; x++)
@@ -121,7 +111,7 @@ void motion_blur_cpu(
 						unsigned char pixel = in_image[(x_kernel + y_kernel * width) * channels + channel];
 
 						int kernel_index = (x_kernel - start_kernel_x) + (y_kernel - start_kernel_y) * kernel_size;
-						unsigned char kernel_value = testBitCpu(kernel, kernel_index);
+						unsigned char kernel_value = test_bit_cpu(kernel, kernel_index);
 
 						if (kernel_value)
 						{
@@ -130,13 +120,13 @@ void motion_blur_cpu(
 					}
 				}
 
-				out_image[index + channel] = channel_sum / (distance + 1.);
+				out_image[index + channel] = channel_sum / ones;
 			}
 		}
 	}
 }
 
-void setBitCpu(
+void set_bit_cpu(
 	unsigned char* bit_vec,
 	const int index
 )
@@ -144,7 +134,7 @@ void setBitCpu(
 	bit_vec[index / BYTE_SIZE] |= 1 << (index % BYTE_SIZE);
 }
 
-bool testBitCpu(
+bool test_bit_cpu(
 	const unsigned char* bit_vec,
 	const int index
 )
