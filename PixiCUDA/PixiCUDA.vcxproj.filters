@@ -19,5 +19,6 @@
   <ItemGroup>
     <ClInclude Include="include\cualgo\motion_blur.cuh" />
     <ClInclude Include="include\cpualgo\motion_blur.hpp" />
+    <ClInclude Include="include\utils\constants.hpp" />
   </ItemGroup>
 </Project>

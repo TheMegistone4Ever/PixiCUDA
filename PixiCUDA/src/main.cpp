@@ -5,19 +5,14 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
+
 #include "cualgo/motion_blur.cuh"
+#include "cpualgo/motion_blur.hpp"
+#include "utils/constants.hpp"
 
 using namespace std;
 using namespace cv;
 namespace fs = filesystem;
-
-#define MAX_DISTANCE (MAX_KERNEL_SIZE / 2 - 1)
-constexpr unsigned char ESC_KEY = 27;
-constexpr unsigned char Q_KEY = 113;
-constexpr unsigned char WAIT_TIME = 50;
-constexpr unsigned short WIN_WIDTH = 1280;
-constexpr unsigned short WIN_HEIGHT = 720;
-constexpr unsigned short MAX_ANGLE_DEG = 360;
 
 typedef chrono::high_resolution_clock::time_point timevar;
 
@@ -81,7 +76,16 @@ int main(int argc, char** argv)
         if (prev_angle_deg != angle_deg || prev_distance != distance)
         {
             timevar start = chrono::high_resolution_clock::now();
-            cuda_motion_blur_image(
+            /*cuda_motion_blur_image(
+                image.data,
+                motion_blur_image.data,
+                angle_deg,
+                distance,
+                image.rows,
+                image.cols,
+                image.channels()
+            );*/
+            cpu_motion_blur_image(
                 image.data,
                 motion_blur_image.data,
                 angle_deg,

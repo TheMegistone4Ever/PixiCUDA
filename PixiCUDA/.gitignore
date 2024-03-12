@@ -4,14 +4,21 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # User-specific files
+## User data
 *.rsuser
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
 
-# User-specific files (MonoDevelop/Xamarin Studio)
+## MonoDevelop/Xamarin Studio
 *.userprefs
+
+## Images
+*.jp*g
+*.png
+*.webp
+*.tif
 
 # User specific folders
 images/

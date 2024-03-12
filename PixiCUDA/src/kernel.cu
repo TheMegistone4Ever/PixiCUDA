@@ -11,9 +11,7 @@
 #include <device_launch_parameters.h>
 
 #include "cualgo/motion_blur.cuh"
-
-constexpr unsigned char BYTE_SIZE = 8;
-#define BIT_VECTOR_SIZE (MAX_KERNEL_SIZE * MAX_KERNEL_SIZE / BYTE_SIZE + (MAX_KERNEL_SIZE * MAX_KERNEL_SIZE % BYTE_SIZE != 0))
+#include "utils/constants.hpp"
 
 __constant__ unsigned char device_kernel[BIT_VECTOR_SIZE] FAKEINIT;
 
@@ -65,6 +63,10 @@ void cuda_motion_blur_image(
         {
             setBit(host_kernel, y * kernel_size + x);
         }
+        else
+        {
+            break;
+        }
     }
 
     // Copy the host kernel data to the device constant memory
@@ -115,7 +117,6 @@ __global__ void motion_blur_cuda(
 {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
-    int index = (x + y * width) * channels;
 
     if (x >= width || y >= height)
 	{
@@ -124,6 +125,7 @@ __global__ void motion_blur_cuda(
 
     int start_kernel_x = x - kernel_size / 2;
     int start_kernel_y = y - kernel_size / 2;
+    int index = (x + y * width) * channels;
 
     for (int channel = 0; channel < channels; channel++)
     {
