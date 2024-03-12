@@ -13,9 +13,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".gitignore" />
     <None Include="cpp.hint" />
     <None Include="..\.gitattributes" />
+    <None Include="..\.gitignore" />
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
