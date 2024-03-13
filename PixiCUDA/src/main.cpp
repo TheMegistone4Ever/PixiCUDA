@@ -47,9 +47,9 @@ int main(int argc, char** argv)
     Mat image = imread(image_path.string());
 
     // Image properties
-    cout << "\t- Image height: " << image.rows << "\n";
-    cout << "\t- Image width: " << image.cols << "\n";
-    cout << "\t- Image channels: " << image.channels() << "\n";
+    cout << "\t- Image height: " << image.rows << "\n"
+        << "\t- Image width: " << image.cols << "\n"
+        << "\t- Image channels: " << image.channels() << "\n";
 
     // Create a window with a stack of images
     namedWindow("Motion Blur", WINDOW_NORMAL);
@@ -82,6 +82,11 @@ int main(int argc, char** argv)
 
         if (prev_angle_deg != angle_deg || prev_distance != distance || prev_algo_selection != algo_selection)
         {
+            cout << "\nMotion blur parameters changed:\n"
+                << "\t- Angle: " << angle_deg << " degrees...\n"
+                << "\t- Distance: " << distance << " pixels...\n"
+                << "\t- Algorithm: ";
+
             timevar start = chrono::high_resolution_clock::now();
             switch (algo_selection)
             {
@@ -113,9 +118,16 @@ int main(int argc, char** argv)
                     cout << "Invalid selection...\n";
             }
             timevar end = chrono::high_resolution_clock::now();
-            cout << "Algorithm time: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms...\n";
+            cout << "\t- Algorithm time: "
+                << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+                << " ms...\n";
 
+            start = chrono::high_resolution_clock::now();
             hconcat(image, motion_blur_image, stacked_image);
+            end = chrono::high_resolution_clock::now();
+            cout << "\t- Stacking time: "
+                << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+                << " ms...\n";
 
             prev_angle_deg = angle_deg;
             prev_distance = distance;
