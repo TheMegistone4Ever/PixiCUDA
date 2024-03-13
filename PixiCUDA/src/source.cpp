@@ -25,6 +25,13 @@ bool test_bit_cpu(
 	const int index
 );
 
+int create_kernel_cpu(
+	const float angle_deg,
+	const int distance,
+	const int kernel_size,
+	unsigned char* kernel
+);
+
 void cpu_motion_blur_image(
 	const unsigned char* in_image,
 	unsigned char* out_image,
@@ -36,11 +43,31 @@ void cpu_motion_blur_image(
 )
 {
 	// Create the kernel and fill it with the correct values
-	float angle_rad = angle_deg * DEG_TO_RAD;
 	int kernel_size = distance * 2 + 1; // +1 to include the center pixel
+	memset(kernel, NULL, static_cast<size_t>(kernel_size * kernel_size / BYTE_SIZE + 1));
+	int ones = create_kernel_cpu(angle_deg, distance, kernel_size, kernel);
+
+	motion_blur_cpu(
+		in_image,
+		out_image,
+		kernel_size,
+		ones,
+		height,
+		width,
+		channels
+	);
+}
+
+int create_kernel_cpu(
+	const float angle_deg,
+	const int distance,
+	const int kernel_size,
+	unsigned char* kernel
+)
+{
+	float angle_rad = angle_deg * DEG_TO_RAD;
 	int ones = 0;
 
-	memset(kernel, NULL, static_cast<size_t>(kernel_size * kernel_size / BYTE_SIZE + 1));
 	for (int i = 0; i < kernel_size; ++i)
 	{
 		int x = distance + int(i * cos(angle_rad));
@@ -52,21 +79,14 @@ void cpu_motion_blur_image(
 			break;
 		}
 
-		if (!test_bit_cpu(kernel, index)) {
+		if (!test_bit_cpu(kernel, index))
+		{
 			set_bit_cpu(kernel, index);
 			++ones;
 		}
 	}
 
-	motion_blur_cpu(
-		in_image,
-		out_image,
-		kernel_size,
-		ones,
-		height,
-		width,
-		channels
-	);
+	return ones;
 }
 
 void motion_blur_cpu(

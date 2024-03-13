@@ -75,15 +75,15 @@ int main(int argc, char** argv)
         if (prev_angle_deg != angle_deg || prev_distance != distance)
         {
             timevar start = chrono::high_resolution_clock::now();
-            //cuda_motion_blur_image(
-            //    image.data,
-            //    motion_blur_image.data,
-            //    angle_deg,
-            //    distance,
-            //    image.rows,
-            //    image.cols,
-            //    image.channels()
-            //);
+            cuda_motion_blur_image(
+                image.data,
+                motion_blur_image.data,
+                angle_deg,
+                distance,
+                image.rows,
+                image.cols,
+                image.channels()
+            );
             cpu_motion_blur_image(
                 image.data,
                 motion_blur_image.data,

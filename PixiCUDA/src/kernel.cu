@@ -25,7 +25,7 @@ __global__ void motion_blur_cuda(
     const int channels
 );
 
-__host__ void set_bit_cuda(
+__host__ void set_bit_cuda_host(
     unsigned char* bit_vec,
     const int index
 );
@@ -40,6 +40,13 @@ __host__ bool test_bit_cuda_host(
     const int index
 );
 
+int create_kernel_cuda(
+    const float angle_deg,
+    const int distance,
+    const int kernel_size,
+    unsigned char* kernel
+);
+
 void cuda_motion_blur_image(
     const unsigned char* in_image,
     unsigned char* out_image,
@@ -50,31 +57,12 @@ void cuda_motion_blur_image(
     const int channels
 )
 {
-    // Calculate the size of the image
     const size_t image_size = static_cast<size_t>(height) * width * channels * sizeof(unsigned char);
 
     // Create the kernel and fill it with the correct values
-    float angle_rad = angle_deg * DEG_TO_RAD;
     int kernel_size = distance * 2 + 1; // +1 to include the center pixel
     unsigned char* host_kernel = new unsigned char[BIT_VECTOR_SIZE] { 0 };
-    int ones = 0;
-    
-    for (int i = 0; i < kernel_size; ++i)
-    {
-        int x = distance + int(i * cos(angle_rad));
-        int y = distance + int(i * sin(angle_rad));
-        int index = y * kernel_size + x;
-
-        if (x < 0 || x >= kernel_size || y < 0 || y >= kernel_size)
-        {
-			break;
-		}
-
-        if (!test_bit_cuda_host(host_kernel, index)) {
-			set_bit_cuda(host_kernel, index);
-            ++ones;
-		}
-    }
+    int ones = create_kernel_cuda(angle_deg, distance, kernel_size, host_kernel);
 
     // Copy the host kernel data to the device constant memory
     cudaMemcpyToSymbol(device_kernel, host_kernel, BIT_VECTOR_SIZE);
@@ -108,6 +96,37 @@ void cuda_motion_blur_image(
     // Free up the memory on the device (GPU)
     cudaFree(device_in_image);
     cudaFree(device_out_image);
+}
+
+int create_kernel_cuda(
+    const float angle_deg,
+    const int distance,
+    const int kernel_size,
+    unsigned char* kernel
+)
+{
+    float angle_rad = angle_deg * DEG_TO_RAD;
+    int ones = 0;
+
+    for (int i = 0; i < kernel_size; ++i)
+    {
+        int x = distance + int(i * cos(angle_rad));
+        int y = distance + int(i * sin(angle_rad));
+        int index = y * kernel_size + x;
+
+        if (x < 0 || x >= kernel_size || y < 0 || y >= kernel_size)
+        {
+            break;
+        }
+
+        if (!test_bit_cuda_host(kernel, index))
+        {
+            set_bit_cuda_host(kernel, index);
+            ++ones;
+        }
+    }
+
+    return ones;
 }
 
 __global__ void motion_blur_cuda(
@@ -166,7 +185,7 @@ __global__ void motion_blur_cuda(
     }
 }
 
-__host__ void set_bit_cuda(
+__host__ void set_bit_cuda_host(
     unsigned char* bit_vec,
     const int index
 )

@@ -12,6 +12,7 @@ constexpr unsigned char WAIT_TIME = 50;
 constexpr unsigned short WIN_WIDTH = 1280;
 constexpr unsigned short WIN_HEIGHT = 720;
 constexpr unsigned short MAX_ANGLE_DEG = 360;
+
 #define BIT_VECTOR_SIZE (MAX_KERNEL_SIZE * MAX_KERNEL_SIZE / BYTE_SIZE + (MAX_KERNEL_SIZE * MAX_KERNEL_SIZE % BYTE_SIZE != 0))
 #define MAX_DISTANCE (MAX_KERNEL_SIZE / 2 - 1)
 
