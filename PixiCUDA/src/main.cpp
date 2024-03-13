@@ -26,6 +26,11 @@ static void onTrackbarDistance(int distance, void* userdata)
     *(unsigned int*)userdata = static_cast<unsigned int>(distance);
 }
 
+static void onTrackbarAlgoSelection(int selection, void* userdata)
+{
+    *(int*)userdata = selection;
+}
+
 int main(int argc, char** argv)
 {
     string images_path = R"(C:\Users\megis\VSProjects\PixiCUDA\PixiCUDA\images)";
@@ -37,7 +42,7 @@ int main(int argc, char** argv)
     if (!fs::exists(image_path))
     {
         cout << "Could not open or find the image..." << endl;
-        return -1;
+        return ERROR_CODE;
     }
     Mat image = imread(image_path.string());
 
@@ -46,24 +51,27 @@ int main(int argc, char** argv)
     cout << "\t- Image width: " << image.cols << "\n";
     cout << "\t- Image channels: " << image.channels() << "\n";
 
-    float angle_deg = .0f;
-    unsigned int distance = 0;
-
     // Create a window with a stack of images
     namedWindow("Motion Blur", WINDOW_NORMAL);
     resizeWindow("Motion Blur", WIN_WIDTH, WIN_HEIGHT);
 
-    // Create trackbars
-    createTrackbar("Angle", "Motion Blur", 0, MAX_ANGLE_DEG, onTrackbarAngle, &angle_deg);
-    createTrackbar("Distance", "Motion Blur", 0, MAX_DISTANCE, onTrackbarDistance, &distance);
-
-    Mat motion_blur_image = image.clone();
-    Mat stacked_image;
+    float angle_deg = MIN_ANGLE_DEG;
+    unsigned int distance = MIN_DISTANCE;
+    int algo_selection = CPU;
 
     float prev_angle_deg = angle_deg;
     unsigned int prev_distance = distance;
+    int prev_algo_selection = algo_selection;
 
+    // Create trackbars
+    createTrackbar("Angle", "Motion Blur", MIN_ANGLE_DEG, MAX_ANGLE_DEG, onTrackbarAngle, &angle_deg);
+    createTrackbar("Distance", "Motion Blur", MIN_DISTANCE, MAX_DISTANCE, onTrackbarDistance, &distance);
+    createTrackbar("Algorithm", "Motion Blur", CPU, CUDA, onTrackbarAlgoSelection, &algo_selection);
+
+    Mat motion_blur_image = image.clone();
+    Mat stacked_image;
     hconcat(image, motion_blur_image, stacked_image);
+
     while (true)
     {
         char key = waitKey(WAIT_TIME);
@@ -71,37 +79,49 @@ int main(int argc, char** argv)
         {
             break;
         }
-        
-        if (prev_angle_deg != angle_deg || prev_distance != distance)
+
+        if (prev_angle_deg != angle_deg || prev_distance != distance || prev_algo_selection != algo_selection)
         {
             timevar start = chrono::high_resolution_clock::now();
-            cuda_motion_blur_image(
-                image.data,
-                motion_blur_image.data,
-                angle_deg,
-                distance,
-                image.rows,
-                image.cols,
-                image.channels()
-            );
-            cpu_motion_blur_image(
-                image.data,
-                motion_blur_image.data,
-                angle_deg,
-                distance,
-                image.rows,
-                image.cols,
-                image.channels()
-            );
+            switch (algo_selection)
+            {
+                case CPU:
+                    cpu_motion_blur_image(
+						image.data,
+						motion_blur_image.data,
+						angle_deg,
+						distance,
+						image.rows,
+						image.cols,
+						image.channels()
+					);
+					cout << "CPU...\n";
+					break;
+                case CUDA:
+                    cuda_motion_blur_image(
+                        image.data,
+                        motion_blur_image.data,
+                        angle_deg,
+                        distance,
+                        image.rows,
+                        image.cols,
+                        image.channels()
+                    );
+                    cout << "CUDA...\n";
+                    break;
+                default:
+                    cout << "Invalid selection...\n";
+            }
             timevar end = chrono::high_resolution_clock::now();
-            cout << "CUDA time: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms...\n";
+            cout << "Algorithm time: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms...\n";
 
             hconcat(image, motion_blur_image, stacked_image);
 
             prev_angle_deg = angle_deg;
             prev_distance = distance;
+            prev_algo_selection = algo_selection;
         }
-        
+
         imshow("Motion Blur", stacked_image);
     }
 
@@ -109,5 +129,5 @@ int main(int argc, char** argv)
 
     imwrite("motion_blur_image.png", motion_blur_image);
 
-    return 0;
+    return SUCCESS_CODE;
 }

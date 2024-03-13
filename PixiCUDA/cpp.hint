@@ -2,12 +2,26 @@
 // such as names of functions and macros.
 // For more information see https://go.microsoft.com/fwlink/?linkid=865984
 
+#define _CONSTANTS_H_
+#define _CPU_MOTION_BLUR_H_
+#define _CUDA_MOTION_BLUR_H_
+
+#define CUDA_KERNEL(...)
+#define CUDA_KERNEL(...) <<< __VA_ARGS__ >>>
+#define FAKEINIT = { 0 }
+#define FAKEINIT
+#define __CUDACC__
+
 #define __constant__ __location__(constant)
+#define __global__ __location__(global)
 #define __host__ __location__(host)
 #define __device__ __location__(device)
-#define __global__ __location__(global)
 
+#define MIN_ANGLE_DEG 0
+#define MAX_ANGLE_DEG 360
+
+#define MIN_DISTANCE 0
 #define MAX_DISTANCE (MAX_KERNEL_SIZE / 2 - 1)
-#define BIT_VECTOR_SIZE (MAX_KERNEL_SIZE * MAX_KERNEL_SIZE / BYTE_SIZE + (MAX_KERNEL_SIZE * MAX_KERNEL_SIZE % BYTE_SIZE != 0))
-#define FAKEINIT = {0}
-#define FAKEINIT
+
+#define CPU 0
+#define CUDA 1
