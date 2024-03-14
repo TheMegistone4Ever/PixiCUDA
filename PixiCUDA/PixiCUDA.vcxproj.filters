@@ -6,6 +6,7 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\source.cpp" />
+    <ClCompile Include="src\mae.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="images">
@@ -22,5 +23,6 @@
     <ClInclude Include="include\cualgo\motion_blur.cuh" />
     <ClInclude Include="include\cpualgo\motion_blur.hpp" />
     <ClInclude Include="include\utils\constants.hpp" />
+    <ClInclude Include="include\utils\mae.hpp" />
   </ItemGroup>
 </Project>

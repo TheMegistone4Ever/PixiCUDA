@@ -94,6 +94,7 @@ copy /Y "$(OPENCV_DIR)\bin\opencv_imgproc490.dll" "$(TargetDir)"
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\mae.cpp" />
     <ClCompile Include="src\source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +107,7 @@ copy /Y "$(OPENCV_DIR)\bin\opencv_imgproc490.dll" "$(TargetDir)"
     <ClInclude Include="include\cpualgo\motion_blur.hpp" />
     <ClInclude Include="include\cualgo\motion_blur.cuh" />
     <ClInclude Include="include\utils\constants.hpp" />
+    <ClInclude Include="include\utils\mae.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

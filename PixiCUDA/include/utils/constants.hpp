@@ -28,4 +28,7 @@ constexpr unsigned char Q_KEY = 113;
 #define CPU 0
 #define CUDA 1
 
+#define PRECISION_OFF 0
+#define PRECISION_ON 1
+
 #endif // !_CONSTANTS_H_
