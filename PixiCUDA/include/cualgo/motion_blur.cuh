@@ -1,6 +1,5 @@
 #pragma once
 
-
 #ifndef _CUDA_MOTION_BLUR_H_
 #define _CUDA_MOTION_BLUR_H_
 

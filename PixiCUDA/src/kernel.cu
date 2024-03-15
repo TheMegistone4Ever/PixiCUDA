@@ -96,6 +96,9 @@ void cuda_motion_blur_image(
     // Free up the memory on the device (GPU)
     cudaFree(device_in_image);
     cudaFree(device_out_image);
+
+    // Free up the memory on the host (CPU)
+    delete[] host_kernel;
 }
 
 int create_kernel_cuda(

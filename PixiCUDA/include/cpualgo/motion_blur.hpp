@@ -1,6 +1,5 @@
 #pragma once
 
-
 #ifndef _CPU_MOTION_BLUR_H_
 #define _CPU_MOTION_BLUR_H_
 
