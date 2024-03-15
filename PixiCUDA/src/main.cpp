@@ -1,8 +1,4 @@
-#include <chrono>
-#include <iomanip>
-#include <iostream>
 #include <filesystem>
-//#include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -45,16 +41,16 @@ int main(int argc, char** argv)
 
     fs::path image_path = fs::path(images_path) / image_name;
 
-    cout << "Image path: " << image_path << "\n";
+    cout << BLUE_BOLD << "Image path: " << image_path << "\n";
     if (!fs::exists(image_path))
     {
-        cout << "Could not open or find the image..." << endl;
+        cout << RED_BOLD << "Could not open or find the image..." << endl << RESET_COLOR;
         return ERROR_CODE;
     }
     Mat image = imread(image_path.string());
 
     // Image properties
-    cout << "\t- Image height: " << image.rows << "\n"
+    cout << CYAN_BOLD << "\t- Image height: " << image.rows << "\n"
         << "\t- Image width: " << image.cols << "\n"
         << "\t- Image channels: " << image.channels() << "\n";
 
@@ -97,7 +93,7 @@ int main(int argc, char** argv)
             prev_check_precision != check_precision
         )
         {
-            cout << "\nMotion blur parameters changed:\n"
+            cout << BLUE_BOLD << "\nMotion blur parameters changed:\n" << CYAN_BOLD
                 << "\t- Angle: " << angle_deg << " degrees...\n"
                 << "\t- Distance: " << distance << " pixels...\n"
                 << "\t- Algorithm: ";
@@ -132,7 +128,7 @@ int main(int argc, char** argv)
                     break;
 
                 default:
-                    cout << "Invalid selection...\n";
+                    cout << RED_BOLD << "Invalid selection...\n" << CYAN_BOLD;
             }
             timevar end = chrono::high_resolution_clock::now();
 
@@ -175,7 +171,7 @@ int main(int argc, char** argv)
                         break;
 
 					default:
-						cout << "Invalid selection...\n";
+						cout << RED_BOLD << "Invalid selection...\n";
                 }
 			}
 
@@ -190,7 +186,10 @@ int main(int argc, char** argv)
 
     destroyAllWindows();
 
-    imwrite("motion_blur_image.png", motion_blur_image);
+    imwrite(IMG_SAVE_PATH, motion_blur_image);
     
+    cout << LIME_BOLD << "\nMotion blur image saved as \"" << IMG_SAVE_PATH << "\"...\n"
+        << "Thanks for using this program!\n" << RESET_COLOR;
+
     return SUCCESS_CODE;
 }

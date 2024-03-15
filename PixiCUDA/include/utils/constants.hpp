@@ -19,6 +19,14 @@ constexpr unsigned short BIT_VECTOR_SIZE = MAX_KERNEL_SIZE * MAX_KERNEL_SIZE / B
 constexpr unsigned char ESC_KEY = 27;
 constexpr unsigned char Q_KEY = 113;
 
+constexpr const char* IMG_SAVE_PATH = "motion_blur_image.png";
+
+constexpr const char* CYAN_BOLD = "\033[1;96m";
+constexpr const char* LIME_BOLD = "\033[1;92m";
+constexpr const char* BLUE_BOLD = "\033[1;34m";
+constexpr const char* RED_BOLD = "\033[1;91m";
+constexpr const char* RESET_COLOR = "\033[0m";
+
 #define MIN_ANGLE_DEG 0
 #define MAX_ANGLE_DEG 360
 
