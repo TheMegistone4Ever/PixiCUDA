@@ -14,6 +14,14 @@ namespace fs = filesystem;
 
 typedef chrono::high_resolution_clock::time_point timevar;
 
+static void toggleTrackbar(const String& trackbarName, const String& winname, bool disabled)
+{
+    if (disabled)
+    {
+		setTrackbarPos(trackbarName, winname, 0); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	}
+}
+
 static void onTrackbarAngle(int angle, void* userdata)
 {
     *(float*)userdata = static_cast<float>(angle);
@@ -27,11 +35,18 @@ static void onTrackbarDistance(int distance, void* userdata)
 static void onTrackbarAlgoSelection(int selection, void* userdata)
 {
     *(unsigned int*)userdata = static_cast<unsigned int>(selection);
+
+    toggleTrackbar("Threads", "Motion Blur", selection != CUDA);
 }
 
 static void onCheckPrecision(int state, void* userdata)
 {
     *(bool*)userdata = static_cast<bool>(state);
+}
+
+static void onTrackbarThreads(int threads, void* userdata)
+{
+    *(unsigned int*)userdata = static_cast<unsigned int>(threads);
 }
 
 int main(int argc, char** argv)
@@ -62,23 +77,27 @@ int main(int argc, char** argv)
     unsigned int distance = MIN_DISTANCE;
     unsigned int algo_selection = CPU;
     bool check_precision = PRECISION_OFF;
+    unsigned int threads_bin_log = 0; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     float prev_angle_deg = angle_deg;
     unsigned int prev_distance = distance;
     unsigned int prev_algo_selection = algo_selection;
     bool prev_check_precision = check_precision;
+    unsigned int prev_threads_bin_log = threads_bin_log;
 
     // Here the trackbars to control the motion blur parameters
     createTrackbar("Angle", "Motion Blur", MIN_ANGLE_DEG, MAX_ANGLE_DEG, onTrackbarAngle, &angle_deg);
     createTrackbar("Distance", "Motion Blur", MIN_DISTANCE, MAX_DISTANCE, onTrackbarDistance, &distance);
     createTrackbar("Algorithm", "Motion Blur", CPU, CUDA, onTrackbarAlgoSelection, &algo_selection);
     createTrackbar("Precision", "Motion Blur", PRECISION_OFF, PRECISION_ON, onCheckPrecision, &check_precision);
+    createTrackbar("Threads", "Motion Blur", 0, 10, onTrackbarThreads, &threads_bin_log); // Maximum value corresponds to 2^10 = 1024 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     Mat motion_blur_image = image.clone();
     Mat motion_blur_image_temp = image.clone();
     Mat stacked_image;
+    unsigned int number_of_threads = 1 << threads_bin_log;
     hconcat(image, motion_blur_image, stacked_image);
-    
+
     while (true)
     {
         char key = waitKey(WAIT_TIME);
@@ -90,45 +109,48 @@ int main(int argc, char** argv)
         if (prev_angle_deg != angle_deg ||
             prev_distance != distance ||
             prev_algo_selection != algo_selection ||
-            prev_check_precision != check_precision
-        )
+            prev_check_precision != check_precision ||
+            prev_threads_bin_log != threads_bin_log)
         {
             cout << BLUE_BOLD << "\nMotion blur parameters changed:\n" << CYAN_BOLD
                 << "\t- Angle: " << angle_deg << " degrees...\n"
                 << "\t- Distance: " << distance << " pixels...\n"
                 << "\t- Algorithm: ";
 
+            number_of_threads = 1 << threads_bin_log;
+
             timevar start = chrono::high_resolution_clock::now();
             switch (algo_selection)
             {
-                case CPU:
-                    cpu_motion_blur_image(
-						image.data,
-						motion_blur_image.data,
-						angle_deg,
-						distance,
-						image.rows,
-						image.cols,
-						image.channels()
-					);
-					cout << "CPU...\n";
-					break;
-                
-                case CUDA:
-                    cuda_motion_blur_image(
-                        image.data,
-                        motion_blur_image.data,
-                        angle_deg,
-                        distance,
-                        image.rows,
-                        image.cols,
-                        image.channels()
-                    );
-                    cout << "CUDA...\n";
-                    break;
+            case CPU:
+                cpu_motion_blur_image(
+                    image.data,
+                    motion_blur_image.data,
+                    angle_deg,
+                    distance,
+                    image.rows,
+                    image.cols,
+                    image.channels()
+                );
+                cout << "CPU...\n";
+                break;
 
-                default:
-                    cout << RED_BOLD << "Invalid selection...\n" << CYAN_BOLD;
+            case CUDA:
+                cuda_motion_blur_image(
+                    image.data,
+                    motion_blur_image.data,
+                    angle_deg,
+                    distance,
+                    image.rows,
+                    image.cols,
+                    image.channels(),
+                    number_of_threads
+                );
+                cout << "CUDA...\n\t- Number of threads: " << number_of_threads << "...\n";
+                break;
+
+            default:
+                cout << RED_BOLD << "Invalid selection...\n" << CYAN_BOLD;
             }
             timevar end = chrono::high_resolution_clock::now();
 
@@ -149,36 +171,37 @@ int main(int argc, char** argv)
                 cout << "\t- Mean Absolute Error (MAE): ";
                 switch (algo_selection)
                 {
-                    case CPU:
-                        cout << fixed << setprecision(32)
-                            << .0
-                            << defaultfloat << "%...\n";
-                        break;
+                case CPU:
+                    cout << fixed << setprecision(32)
+                        << .0
+                        << defaultfloat << "%...\n";
+                    break;
 
-                    case CUDA:
-                        cpu_motion_blur_image(
-							image.data,
-                            motion_blur_image_temp.data,
-							angle_deg,
-							distance,
-							image.rows,
-							image.cols,
-							image.channels()
-						);
-						cout << fixed << setprecision(32)
-                            << immae(motion_blur_image, motion_blur_image_temp) * 100
-                            << defaultfloat << "%...\n";
-                        break;
+                case CUDA:
+                    cpu_motion_blur_image(
+                        image.data,
+                        motion_blur_image_temp.data,
+                        angle_deg,
+                        distance,
+                        image.rows,
+                        image.cols,
+                        image.channels()
+                    );
+                    cout << fixed << setprecision(32)
+                        << immae(motion_blur_image, motion_blur_image_temp) * 100
+                        << defaultfloat << "%...\n";
+                    break;
 
-					default:
-						cout << RED_BOLD << "Invalid selection...\n";
+                default:
+                    cout << RED_BOLD << "Invalid selection...\n";
                 }
-			}
+            }
 
             prev_angle_deg = angle_deg;
             prev_distance = distance;
             prev_algo_selection = algo_selection;
             prev_check_precision = check_precision;
+            prev_threads_bin_log = threads_bin_log;
         }
 
         imshow("Motion Blur", stacked_image);
@@ -187,7 +210,7 @@ int main(int argc, char** argv)
     destroyAllWindows();
 
     imwrite(IMG_SAVE_PATH, motion_blur_image);
-    
+
     cout << LIME_BOLD << "\nMotion blur image saved as \"" << IMG_SAVE_PATH << "\"...\n"
         << "Thanks for using this program!\n" << RESET_COLOR;
 

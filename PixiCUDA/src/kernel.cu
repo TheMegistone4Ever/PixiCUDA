@@ -54,7 +54,8 @@ void cuda_motion_blur_image(
     const int distance,
     const int height,
     const int width,
-    const int channels
+    const int channels,
+    const unsigned int number_of_threads
 )
 {
     const size_t image_size = static_cast<size_t>(height) * width * channels * sizeof(unsigned char);
@@ -79,8 +80,10 @@ void cuda_motion_blur_image(
     cudaMemcpy(device_in_image, in_image, image_size, cudaMemcpyHostToDevice);
 
     // Kernel launch
-    dim3 grid_image(width, height);
-    motion_blur_cuda <<<grid_image, 1>>> (
+    dim3 block(number_of_threads, 1, 1);
+    dim3 grid((width + block.x - 1) / block.x, (height + block.y - 1) / block.y, 1);
+
+    motion_blur_cuda <<< grid, block >>> (
         device_in_image,
         device_out_image,
         kernel_size,
