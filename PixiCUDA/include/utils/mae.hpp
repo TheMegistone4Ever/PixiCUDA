@@ -3,7 +3,7 @@
 #ifndef _MSE_H_
 #define _MSE_H_
 
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/mat.hpp>
 
 long double immae(cv::Mat& i1, cv::Mat& i2);
 

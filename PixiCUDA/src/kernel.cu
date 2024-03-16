@@ -80,8 +80,8 @@ void cuda_motion_blur_image(
     cudaMemcpy(device_in_image, in_image, image_size, cudaMemcpyHostToDevice);
 
     // Kernel launch
-    dim3 block(number_of_threads, 1, 1);
-    dim3 grid((width + block.x - 1) / block.x, (height + block.y - 1) / block.y, 1);
+    dim3 block(number_of_threads);
+    dim3 grid((width + block.x - 1) / block.x, height);
 
     motion_blur_cuda <<< grid, block >>> (
         device_in_image,

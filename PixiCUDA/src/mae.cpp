@@ -1,3 +1,6 @@
+#include <iostream>
+#include <opencv2/core/core.hpp>
+
 #include "utils/mae.hpp"
 #include "utils/constants.hpp"
 
@@ -5,7 +8,7 @@ long double immae(cv::Mat& i1, cv::Mat& i2)
 {
 	if (i1.size() != i2.size())
 	{
-		std::cerr << "Images have different sizes..." << std::endl;
+		std::cerr << RED_BOLD << "Images have different sizes..." << RESET_COLOR << std::endl;
 		return ERROR_CODE;
 	}
 

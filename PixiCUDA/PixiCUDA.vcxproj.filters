@@ -24,5 +24,6 @@
     <ClInclude Include="include\cpualgo\motion_blur.hpp" />
     <ClInclude Include="include\utils\constants.hpp" />
     <ClInclude Include="include\utils\mae.hpp" />
+    <ClInclude Include="include\utils\main.hpp" />
   </ItemGroup>
 </Project>
