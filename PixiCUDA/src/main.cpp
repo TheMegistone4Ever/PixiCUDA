@@ -19,7 +19,7 @@ typedef chrono::high_resolution_clock::time_point timevar;
 int main(int argc, char** argv)
 {
     string images_path = R"(C:\Users\megis\VSProjects\PixiCUDA\PixiCUDA\images)";
-    string image_name = "ny_ts_cropp_macdonalds.png";
+    string image_name = "ny_times_square.png";
 
     fs::path image_path = fs::path(images_path) / image_name;
 
@@ -148,6 +148,7 @@ int main(int argc, char** argv)
                     break;
 
                 case CUDA:
+                    start = chrono::high_resolution_clock::now();
                     cpu_motion_blur_image(
                         image.data,
                         motion_blur_image_temp.data,
@@ -157,9 +158,13 @@ int main(int argc, char** argv)
                         image.cols,
                         image.channels()
                     );
+                    end = chrono::high_resolution_clock::now();
                     cout << fixed << setprecision(32)
                         << immae(motion_blur_image, motion_blur_image_temp) * 100
                         << defaultfloat << "%;\n";
+                    cout << "\t- CPU MAE time: "
+                        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+                        << " ms;\n";
                     break;
 
                 default:

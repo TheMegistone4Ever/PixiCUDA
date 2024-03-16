@@ -14,5 +14,5 @@ long double immae(cv::Mat& i1, cv::Mat& i2)
 
 	cv::Mat absdiff;
 	cv::absdiff(i1, i2, absdiff);
-	return static_cast<long double>(cv::sum(absdiff)[0]) / (i1.rows * i1.cols * UCHAR_MAX);
+	return abs(static_cast<long double>(cv::sum(absdiff)[0]) / (i1.rows * i1.cols * UCHAR_MAX));
 }
