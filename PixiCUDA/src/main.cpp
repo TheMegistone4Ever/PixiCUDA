@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
     fs::path image_path = fs::path(images_path) / image_name;
 
-    cout << BLUE_BOLD << "Image path: " << image_path << "\n";
+    cout << BLUE_BOLD << "Image path: \"" << image_path << "\"\n";
     if (!fs::exists(image_path))
     {
         cerr << RED_BOLD << "Could not open or find the image;" << RESET_COLOR << endl;
@@ -63,6 +63,8 @@ int main(int argc, char** argv)
     Mat motion_blur_image_temp = image.clone();
     Mat stacked_image;
     unsigned int number_of_threads = 1 << threads_bin_log;
+    long double mae = .0;
+    long long cpu_mae_time = .0;
     hconcat(image, motion_blur_image, stacked_image);
 
     while (true)
@@ -102,10 +104,7 @@ int main(int argc, char** argv)
                 break;
 
             case CUDA:
-                if (prev_threads_bin_log != threads_bin_log)
-                {
-                    number_of_threads = 1 << threads_bin_log;
-                }
+                number_of_threads = 1 << threads_bin_log;
                 cuda_motion_blur_image(
                     image.data,
                     motion_blur_image.data,
@@ -116,7 +115,7 @@ int main(int argc, char** argv)
                     image.channels(),
                     number_of_threads
                 );
-                cout << "CUDA;\n\t- Number of threads: " << number_of_threads << ";\n";
+                cout << "CUDA;\n\t\t∟ Number of threads: " << number_of_threads << ";\n";
                 break;
 
             default:
@@ -159,12 +158,17 @@ int main(int argc, char** argv)
                         image.channels()
                     );
                     end = chrono::high_resolution_clock::now();
-                    cout << fixed << setprecision(32)
-                        << immae(motion_blur_image, motion_blur_image_temp) * 100
-                        << defaultfloat << "%;\n";
-                    cout << "\t- CPU MAE time: "
+                    cpu_mae_time = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+
+                    start = chrono::high_resolution_clock::now();
+                    mae = immae(motion_blur_image, motion_blur_image_temp);
+                    end = chrono::high_resolution_clock::now();
+
+                    cout << fixed << setprecision(32) << mae * PERCENTAGE << defaultfloat
+                        << "%;\n\t\t∟ CPU (MAE) time: " << cpu_mae_time
+                        << " ms;\n\t\t∟ MAE time: "
                         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-                        << " ms;\n";
+						<< " ms;\n";
                     break;
 
                 default:

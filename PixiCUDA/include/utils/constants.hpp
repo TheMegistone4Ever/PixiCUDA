@@ -7,6 +7,7 @@ constexpr char SUCCESS_CODE = 0;
 constexpr char ERROR_CODE = -1;
 
 constexpr unsigned short MAX_KERNEL_SIZE = 724;
+constexpr unsigned char PERCENTAGE = 100;
 constexpr unsigned char BYTE_SIZE = 8;
 constexpr float DEG_TO_RAD = .017453293f;
 
