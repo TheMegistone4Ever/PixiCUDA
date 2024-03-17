@@ -42,11 +42,17 @@ void cpu_motion_blur_image(
 	const int channels
 )
 {
+	const size_t image_size = static_cast<size_t>(height) * width * channels * sizeof(unsigned char);
+
+	// Allocate memory on the host (CPU)
+	memset(out_image, NULL, image_size);
+
 	// Create the kernel and fill it with the correct values
 	int kernel_size = distance * 2 + 1; // +1 to include the center pixel
 	memset(kernel, NULL, static_cast<size_t>(kernel_size * kernel_size / BYTE_SIZE + 1));
 	int ones = create_kernel_cpu(angle_deg, distance, kernel_size, kernel);
 
+	// Call the motion blur function
 	motion_blur_cpu(
 		in_image,
 		out_image,
@@ -99,9 +105,6 @@ void motion_blur_cpu(
 	const int channels
 )
 {
-	const size_t image_size = static_cast<size_t>(height) * width * channels * sizeof(unsigned char);
-	memset(out_image, NULL, image_size);
-
 	for (int x = 0; x < width; ++x)
 	{
 		for (int y = 0; y < height; ++y)

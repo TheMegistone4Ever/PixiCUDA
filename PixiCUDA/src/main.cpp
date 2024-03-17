@@ -18,8 +18,8 @@ typedef chrono::high_resolution_clock::time_point timevar;
 
 int main(int argc, char** argv)
 {
-    string images_path = R"(C:\Users\megis\VSProjects\PixiCUDA\PixiCUDA\images)";
-    string image_name = "ny_times_square.png";
+    string images_path = "images";
+    string image_name = "ny_ts_cropp_macdonalds.png";
 
     fs::path image_path = fs::path(images_path) / image_name;
 
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     Mat stacked_image;
     unsigned int number_of_threads = 1 << threads_bin_log;
     long double mae = .0;
-    long long cpu_mae_time = .0;
+    long long cpu_mae_time = 0;
     hconcat(image, motion_blur_image, stacked_image);
 
     while (true)
@@ -91,6 +91,7 @@ int main(int argc, char** argv)
             switch (algo_selection)
             {
             case CPU:
+                cout << "CPU;\n";
                 cpu_motion_blur_image(
                     image.data,
                     motion_blur_image.data,
@@ -100,11 +101,11 @@ int main(int argc, char** argv)
                     image.cols,
                     image.channels()
                 );
-                cout << "CPU;\n";
                 break;
 
             case CUDA:
                 number_of_threads = 1 << threads_bin_log;
+                cout << "CUDA;\n\t\tL Number of threads: " << number_of_threads << ";\n";
                 cuda_motion_blur_image(
                     image.data,
                     motion_blur_image.data,
@@ -115,7 +116,6 @@ int main(int argc, char** argv)
                     image.channels(),
                     number_of_threads
                 );
-                cout << "CUDA;\n\t\t∟ Number of threads: " << number_of_threads << ";\n";
                 break;
 
             default:
@@ -141,9 +141,7 @@ int main(int argc, char** argv)
                 switch (algo_selection)
                 {
                 case CPU:
-                    cout << fixed << setprecision(32)
-                        << .0
-                        << defaultfloat << "%;\n";
+                    cout << fixed << setprecision(32) << .0 << defaultfloat << "%;\n";
                     break;
 
                 case CUDA:
@@ -165,8 +163,8 @@ int main(int argc, char** argv)
                     end = chrono::high_resolution_clock::now();
 
                     cout << fixed << setprecision(32) << mae * PERCENTAGE << defaultfloat
-                        << "%;\n\t\t∟ CPU (MAE) time: " << cpu_mae_time
-                        << " ms;\n\t\t∟ MAE time: "
+                        << "%;\n\t\tL CPU (MAE) time: " << cpu_mae_time
+                        << " ms;\n\t\tL MAE time: "
                         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
 						<< " ms;\n";
                     break;
