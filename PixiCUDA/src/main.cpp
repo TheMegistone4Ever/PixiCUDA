@@ -56,8 +56,8 @@ int main(int argc, char** argv)
     createTrackbar("Angle", WIN_NAME, MIN_ANGLE_DEG, MAX_ANGLE_DEG, onTrackbarAngle, &angle_deg);
     createTrackbar("Distance", WIN_NAME, MIN_DISTANCE, MAX_DISTANCE, onTrackbarDistance, &distance);
     createTrackbar("Algorithm", WIN_NAME, CPU, CUDA, onTrackbarAlgoSelection, &algo_selection);
-    createTrackbar("Precision", WIN_NAME, PRECISION_OFF, PRECISION_ON, onCheckPrecision, &check_precision);
-    createTrackbar("Threads BL", WIN_NAME, MIN_THREADS_BLOG, MAX_THREADS_BLOG, onTrackbarThreads, &threads_bin_log);
+    createTrackbar("Precision", WIN_NAME, PRECISION_OFF, PRECISION_ON, onTrackbarCheckPrecision, &check_precision);
+    createTrackbar("Threads BL", WIN_NAME, MIN_THREADS_BLOG, MAX_THREADS_BLOG, onTrackbarThreadsBinLog, &threads_bin_log);
 
     Mat motion_blur_image = image.clone();
     Mat motion_blur_image_temp = image.clone();
@@ -211,12 +211,12 @@ static void onTrackbarAlgoSelection(int selection, void* userdata)
     *(unsigned int*)userdata = static_cast<unsigned int>(selection);
 }
 
-static void onCheckPrecision(int state, void* userdata)
+static void onTrackbarCheckPrecision(int state, void* userdata)
 {
     *(bool*)userdata = static_cast<bool>(state);
 }
 
-static void onTrackbarThreads(int threads, void* userdata)
+static void onTrackbarThreadsBinLog(int threads, void* userdata)
 {
     *(unsigned int*)userdata = static_cast<unsigned int>(threads);
 }

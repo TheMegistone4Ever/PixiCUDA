@@ -6,7 +6,7 @@
 static void onTrackbarAngle(int angle, void* userdata);
 static void onTrackbarDistance(int distance, void* userdata);
 static void onTrackbarAlgoSelection(int selection, void* userdata);
-static void onCheckPrecision(int state, void* userdata);
-static void onTrackbarThreads(int threads, void* userdata);
+static void onTrackbarCheckPrecision(int state, void* userdata);
+static void onTrackbarThreadsBinLog(int threads, void* userdata);
 
 #endif // !_MAIN_H_

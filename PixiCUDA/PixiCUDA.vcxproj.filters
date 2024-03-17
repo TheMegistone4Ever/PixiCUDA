@@ -18,6 +18,7 @@
     <None Include="..\.gitignore" />
     <None Include="..\README.md" />
     <None Include="cpp.hint" />
+    <None Include="..\LICENSE.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cualgo\motion_blur.cuh" />

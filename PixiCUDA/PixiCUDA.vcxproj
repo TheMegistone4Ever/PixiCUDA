@@ -100,6 +100,7 @@ copy /Y "$(OPENCV_DIR)\bin\opencv_imgproc490.dll" "$(TargetDir)"
   <ItemGroup>
     <None Include="..\.gitattributes" />
     <None Include="..\.gitignore" />
+    <None Include="..\LICENSE.md" />
     <None Include="..\README.md" />
     <None Include="cpp.hint" />
   </ItemGroup>
