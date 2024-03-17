@@ -33,7 +33,7 @@ To deploy the motion blur filter application, follow these steps:
   `git clone https://github.com/TheMegistone4Ever/PixiCUDA.git`
 
 - Open the project in Visual Studio.
-- Edit path to images in `PixiCUDA\src\main.cpp` file.
+- Edit path to images in [main.cpp](PixiCUDA\src\main.cpp) file.
 - Build the project in Visual Studio into an executable (.exe) file.
 - Run the application.														
 - Select needed parameters. Application will create a new image with motion blur effect.
