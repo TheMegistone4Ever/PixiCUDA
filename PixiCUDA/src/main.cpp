@@ -32,9 +32,9 @@ int main(int argc, char** argv)
     Mat image = imread(image_path.string());
 
     // Image properties
-    cout << CYAN_BOLD << "\t- Image height: " << image.rows << ";\n"
-        << "\t- Image width: " << image.cols << ";\n"
-        << "\t- Image channels: " << image.channels() << ";\n";
+    cout << CYAN_BOLD << "\t- Image height: " << image.rows
+        << ";\n\t- Image width: " << image.cols
+        << ";\n\t- Image channels: " << image.channels() << ";\n";
 
     // This is the main window where all the magic happens
     namedWindow(WIN_NAME, WINDOW_NORMAL);
@@ -188,8 +188,8 @@ int main(int argc, char** argv)
 
     imwrite(IMG_SAVE_PATH, motion_blur_image);
 
-    cout << LIME_BOLD << "\nMotion blur image saved as \"" << IMG_SAVE_PATH << "\"...\n"
-        << "Thanks for using this program!\n" << RESET_COLOR;
+    cout << LIME_BOLD << "\nMotion blur image saved as \"" << IMG_SAVE_PATH
+        << "\"...\nThanks for using this program!\n" << RESET_COLOR;
 
     return SUCCESS_CODE;
 }
