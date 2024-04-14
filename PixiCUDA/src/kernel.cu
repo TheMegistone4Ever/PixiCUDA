@@ -83,7 +83,8 @@ void cuda_motion_blur_image(
     dim3 block(number_of_threads);
     dim3 grid((width + block.x - 1) / block.x, height);
 
-    motion_blur_cuda <<< grid, block >>> (
+    motion_blur_cuda CUDA_KERNEL(grid, block)
+    (
         device_in_image,
         device_out_image,
         kernel_size,
