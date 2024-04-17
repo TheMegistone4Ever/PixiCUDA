@@ -5,6 +5,7 @@
 #define _MSE_H_
 #define _MAIN_H_
 #define _CONSTANTS_H_
+#define _BENCHMARK_H_
 #define _CPU_MOTION_BLUR_H_
 #define _CUDA_MOTION_BLUR_H_
 

@@ -7,6 +7,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\source.cpp" />
     <ClCompile Include="src\mae.cpp" />
+    <ClCompile Include="src\benchmark.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="images">
@@ -26,5 +27,6 @@
     <ClInclude Include="include\utils\constants.hpp" />
     <ClInclude Include="include\utils\mae.hpp" />
     <ClInclude Include="include\utils\main.hpp" />
+    <ClInclude Include="include\utils\benchmark.hpp" />
   </ItemGroup>
 </Project>

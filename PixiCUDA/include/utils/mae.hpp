@@ -5,6 +5,6 @@
 
 #include <opencv2/core/mat.hpp>
 
-long double immae(cv::Mat& i1, cv::Mat& i2);
+long double immae(const cv::Mat& i1, const cv::Mat& i2);
 
 #endif // !_MSE_H_

@@ -94,6 +94,7 @@ copy /Y "$(OPENCV_DIR)\bin\opencv_imgproc490.dll" "$(TargetDir)"
     <CudaCompile Include="src\kernel.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\benchmark.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mae.cpp" />
     <ClCompile Include="src\source.cpp" />
@@ -108,6 +109,7 @@ copy /Y "$(OPENCV_DIR)\bin\opencv_imgproc490.dll" "$(TargetDir)"
   <ItemGroup>
     <ClInclude Include="include\cpualgo\motion_blur.hpp" />
     <ClInclude Include="include\cualgo\motion_blur.cuh" />
+    <ClInclude Include="include\utils\benchmark.hpp" />
     <ClInclude Include="include\utils\main.hpp" />
     <ClInclude Include="include\utils\constants.hpp" />
     <ClInclude Include="include\utils\mae.hpp" />

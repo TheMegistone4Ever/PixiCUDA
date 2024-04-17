@@ -4,7 +4,7 @@
 #include "utils/mae.hpp"
 #include "utils/constants.hpp"
 
-long double immae(cv::Mat& i1, cv::Mat& i2)
+long double immae(const cv::Mat& i1, const cv::Mat& i2)
 {
 	if (i1.size() != i2.size())
 	{

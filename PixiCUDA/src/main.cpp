@@ -1,14 +1,14 @@
 #include <filesystem>
-#include <opencv2/opencv.hpp>
-#include <opencv2/core/core.hpp>
+#include <iostream>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "cualgo/motion_blur.cuh"
 #include "cpualgo/motion_blur.hpp"
+#include "cualgo/motion_blur.cuh"
 #include "utils/constants.hpp"
 #include "utils/mae.hpp"
 #include "utils/main.hpp"
+#include "utils/benchmark.hpp"
 
 using namespace std;
 using namespace cv;
@@ -18,10 +18,14 @@ typedef chrono::high_resolution_clock::time_point timevar;
 
 int main(int argc, char** argv)
 {
-    string images_path = "images";
+    return main_benchmark(5, 10, MAX_ANGLE_DEG, MAX_DISTANCE, 3,
+        { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024 }
+    );
+
+    string test_images_path = R"(images\test)";
     string image_name = "ny_ts_cropp_macdonalds.png";
 
-    fs::path image_path = fs::path(images_path) / image_name;
+    fs::path image_path = fs::path(test_images_path) / image_name;
 
     cout << BLUE_BOLD << "Image path: \"" << image_path << "\"\n";
     if (!fs::exists(image_path))
@@ -194,27 +198,27 @@ int main(int argc, char** argv)
     return SUCCESS_CODE;
 }
 
-static void onTrackbarAngle(int angle, void* userdata)
+static void onTrackbarAngle(const int angle, void* userdata)
 {
     *(float*)userdata = static_cast<float>(angle);
 }
 
-static void onTrackbarDistance(int distance, void* userdata)
+static void onTrackbarDistance(const int distance, void* userdata)
 {
     *(unsigned int*)userdata = static_cast<unsigned int>(distance);
 }
 
-static void onTrackbarAlgoSelection(int selection, void* userdata)
+static void onTrackbarAlgoSelection(const int selection, void* userdata)
 {
     *(unsigned int*)userdata = static_cast<unsigned int>(selection);
 }
 
-static void onTrackbarCheckPrecision(int state, void* userdata)
+static void onTrackbarCheckPrecision(const int state, void* userdata)
 {
     *(bool*)userdata = static_cast<bool>(state);
 }
 
-static void onTrackbarThreadsBinLog(int threads, void* userdata)
+static void onTrackbarThreadsBinLog(const int threads, void* userdata)
 {
     *(unsigned int*)userdata = static_cast<unsigned int>(threads);
 }
