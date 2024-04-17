@@ -7,8 +7,8 @@
 #include "cualgo/motion_blur.cuh"
 #include "utils/constants.hpp"
 #include "utils/mae.hpp"
-#include "utils/main.hpp"
 #include "utils/benchmark.hpp"
+#include "main.hpp"
 
 using namespace std;
 using namespace cv;
@@ -18,9 +18,13 @@ typedef chrono::high_resolution_clock::time_point timevar;
 
 int main(int argc, char** argv)
 {
-    return main_benchmark(5, 10, MAX_ANGLE_DEG, MAX_DISTANCE, 3,
-        { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024 }
-    );
+    bool benchmark = true;
+    if (benchmark)
+    {
+        return main_benchmark(5, 10, MAX_ANGLE_DEG, MAX_DISTANCE, 3,
+            { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024 }
+        );
+    }
 
     string test_images_path = R"(images\test)";
     string image_name = "ny_ts_cropp_macdonalds.png";

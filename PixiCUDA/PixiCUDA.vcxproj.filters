@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CudaCompile Include="src\kernel.cu" />
+    <CudaCompile Include="src\cualgo\kernel.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\source.cpp" />
-    <ClCompile Include="src\mae.cpp" />
-    <ClCompile Include="src\benchmark.cpp" />
+    <ClCompile Include="src\cpualgo\source.cpp" />
+    <ClCompile Include="src\utils\mae.cpp" />
+    <ClCompile Include="src\utils\benchmark.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="images">
@@ -26,7 +26,7 @@
     <ClInclude Include="include\cpualgo\motion_blur.hpp" />
     <ClInclude Include="include\utils\constants.hpp" />
     <ClInclude Include="include\utils\mae.hpp" />
-    <ClInclude Include="include\utils\main.hpp" />
+    <ClInclude Include="include\main.hpp" />
     <ClInclude Include="include\utils\benchmark.hpp" />
   </ItemGroup>
 </Project>
