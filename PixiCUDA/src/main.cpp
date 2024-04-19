@@ -18,7 +18,7 @@ typedef chrono::high_resolution_clock::time_point timevar;
 
 int main(int argc, char** argv)
 {
-    bool benchmark = true;
+    bool benchmark = false;
     if (benchmark)
     {
         return main_benchmark(5, 10, MAX_ANGLE_DEG, MAX_DISTANCE, 3,
