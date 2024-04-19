@@ -5,9 +5,9 @@
 
 #include "cpualgo/motion_blur.hpp"
 #include "cualgo/motion_blur.cuh"
+#include "tests/benchmark.hpp"
 #include "utils/constants.hpp"
 #include "utils/mae.hpp"
-#include "utils/benchmark.hpp"
 #include "main.hpp"
 
 using namespace std;
