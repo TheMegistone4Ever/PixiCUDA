@@ -93,8 +93,9 @@ blur filter for time comparison.
 
 ## 3 Running the Program
 
-Launch the motion blur filter application PixiCUDA by running the PixiCUDA.exe file, located in the `PixiCUDA.zip` in release,
-and you will be presented with the main window of the application.
+Launch the motion blur filter application PixiCUDA by running the PixiCUDA.exe file, located in the `PixiCUDA.zip` in
+release, and you will be presented with the main window of the application. You can also select the needed image and
+paste it in the `images` folder in the project directory. Rename it to `to_launch.png` and run the application.
 
 ### 3.1 The main page of the PixiCUDA
 
