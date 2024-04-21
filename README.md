@@ -108,7 +108,6 @@ paste it in the `images` folder in the project directory. Rename it to `to_launc
 <img src="images/cuda64.png" alt="Example of GPU (CUDA) usage with 64 threads per block" width="600"/>
 
 #### 3.1.3 Graph of acceleration of the parallel algorithm
-iterations with different number of threads
 
 <img src="images/acceleration.png" alt="Graph of acceleration of the parallel algorithm" width="600"/>
 
