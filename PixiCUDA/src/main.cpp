@@ -27,7 +27,7 @@ int main(int argc, char** argv)
     }
 
     string test_images_path = R"(images\test)";
-    string image_name = "ny_ts_cropp_macdonalds.png";
+    string image_name = "to_launch.png";
 
     fs::path image_path = fs::path(test_images_path) / image_name;
 

@@ -11,9 +11,10 @@
    2. [Software Requirements](#22-software-requirements)
 3. [Running the Program](#3-running-the-program)
    1. [The main page of the PixiCUDA](#31-the-main-page-of-the-pixicuda)
-	  1. [An example of ...](#311-an-example-of-)
-	  2. [An example of ...](#312-an-example-of-)
-	  3. [An example of ...](#313-an-example-of-)
+	  1. [An example of CPU usage](#311-an-example-of-cpu-usage)
+	  2. [An example of GPU (CUDA) usage with 64 threads per block](#312-an-example-of-cuda-usage)
+	  3. [Graph of acceleration of the parallel algorithm relative to the sequential one with 5 warm-ups and 10
+         iterations with different number of threads](#313-graph-of-acceleration)
 4. [License](#4-license)
 
 ## 1. Getting Started
@@ -52,19 +53,21 @@ blur filter for time comparison.
 ### 2.1 System Requirements
 
 **Minimum Hardware Configuration:**
-- Processor type: [Intel Core i3](https://www.intel.com/content/www/us/en/products/details/processors/core/i3.html) or equivalent;
+- Processor type: [Intel Core i3](https://www.intel.com/content/www/us/en/products/details/processors/core/i3.html)
+  or equivalent;
 - RAM: 2 GB;
 - Graphics card: [NVIDIA GeForce 600 series](https://www.nvidia.com/download/driverResults.aspx/218807/en-us) or later;
-- Required Driver Version for [CUDA Compatibility](https://docs.nvidia.com/deploy/cuda-compatibility/index.html): >=525.60.13 for
-  Linux, >=528.33 for Windows;
+- Required Driver Version for [CUDA Compatibility](https://docs.nvidia.com/deploy/cuda-compatibility/index.html): >=525.60.13 for Linux, >=528.33 for Windows;
 - Internet connection: Not required;
 - Disk space: 1 GB;
 - C++ compiler: [Visual Studio](https://visualstudio.microsoft.com) 2019 or later.
 
 **Recommended Hardware Configuration:**
-- Processor type: [AMD Ryzen 9 6900HS with Radeon Graphics](https://nanoreview.net/en/cpu/amd-ryzen-9-6900hs) or equivalent;
+- Processor type: [AMD Ryzen 9 6900HS with Radeon Graphics](https://nanoreview.net/en/cpu/amd-ryzen-9-6900hs) or
+  equivalent;
 - RAM: 16 GB;
-- Graphics card: [NVIDIA GeForce RTX 3050](https://www.nvidia.com/ru-ru/geforce/graphics-cards/30-series/rtx-3050) or later;
+- Graphics card: [NVIDIA GeForce RTX 3050](https://www.nvidia.com/ru-ru/geforce/graphics-cards/30-series/rtx-3050) or
+  later;
 - Required Driver Version for [CUDA Compatibility](https://docs.nvidia.com/deploy/cuda-compatibility/index.html): >=525.60.13 for
   Linux, >=528.33 for Windows;
 - Internet connection: Not required;
@@ -96,15 +99,18 @@ main window of the application.
 
 ### 3.1 The main page of the PixiCUDA
 
-<img src="git_images/..." alt="PICTURE_MAIN" width="600"/>
+#### 3.1.1 An example of CPU usage
 
-#### 3.1.1 An example of ...
+<img src="images/cpu.png" alt="Example of CPU usage" width="600"/>
 
-#### 3.1.2 An example of ...
+#### 3.1.2 An example of GPU (CUDA) usage with 64 threads per block
 
-#### 3.1.3 An example of ...
+<img src="images/cuda64.png" alt="Example of GPU (CUDA) usage with 64 threads per block" width="600"/>
 
-...
+#### 3.1.3 Graph of acceleration of the parallel algorithm relative to the sequential one with 5 warm-ups and 10
+iterations with different number of threads
+
+<img src="images/acceleration.png" alt="Graph of acceleration of the parallel algorithm" width="600"/>
 
 ## 4 License
 
