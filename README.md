@@ -12,9 +12,8 @@
 3. [Running the Program](#3-running-the-program)
    1. [The main page of the PixiCUDA](#31-the-main-page-of-the-pixicuda)
 	  1. [An example of CPU usage](#311-an-example-of-cpu-usage)
-	  2. [An example of GPU (CUDA) usage with 64 threads per block](#312-an-example-of-cuda-usage)
-	  3. [Graph of acceleration of the parallel algorithm relative to the sequential one with 5 warm-ups and 10
-         iterations with different number of threads](#313-graph-of-acceleration)
+	  2. [An example of GPU (CUDA) usage with 64 threads per block](#312-an-example-of-gpu-cuda-usage-with-64-threads-per-block)
+	  3. [Graph of acceleration of the parallel algorithm](#313-graph-of-acceleration-of-the-parallel-algorithm)
 4. [License](#4-license)
 
 ## 1. Getting Started
