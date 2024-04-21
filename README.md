@@ -106,7 +106,7 @@ main window of the application.
 
 <img src="images/cuda64.png" alt="Example of GPU (CUDA) usage with 64 threads per block" width="600"/>
 
-#### 3.1.3 Graph of acceleration of the parallel algorithm relative to the sequential one with 5 warm-ups and 10
+#### 3.1.3 Graph of acceleration of the parallel algorithm
 iterations with different number of threads
 
 <img src="images/acceleration.png" alt="Graph of acceleration of the parallel algorithm" width="600"/>
