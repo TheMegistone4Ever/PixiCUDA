@@ -21,7 +21,7 @@
 *.tif
 
 # User specific folders
-images/
+
 
 # Mono auto generated files
 mono_crash.*
