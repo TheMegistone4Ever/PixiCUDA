@@ -4,6 +4,10 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # User-specific files
+
+## Auto-generated files
+motion_blur*.png
+
 ## User data
 *.rsuser
 *.suo
@@ -14,14 +18,8 @@
 ## MonoDevelop/Xamarin Studio
 *.userprefs
 
-## Images
-*.jp*g
-*.png
-*.webp
-*.tif
-
 # User specific folders
-
+*/images/
 
 # Mono auto generated files
 mono_crash.*
