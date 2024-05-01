@@ -20,7 +20,6 @@
     <None Include="..\README.md" />
     <None Include="cpp.hint" />
     <None Include="..\LICENSE.md" />
-    <None Include="..\..\..\Desktop\Nick NTUU\Subjects\Subjects — 6 Semester\3rd Course - Term Paper - Mykyta Kyselov - IP-13 - 2nd Semester\Алгоритм_обробки_графічних_зображень_та_його_паралельна_реалізація.pptx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cualgo\motion_blur.cuh" />
