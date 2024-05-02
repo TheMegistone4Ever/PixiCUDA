@@ -14,6 +14,7 @@
 	  1. [An example of CPU usage](#311-an-example-of-cpu-usage)
 	  2. [An example of GPU (CUDA) usage with 64 threads per block](#312-an-example-of-gpu-cuda-usage-with-64-threads-per-block)
 	  3. [Graph of acceleration of the parallel algorithm](#313-graph-of-acceleration-of-the-parallel-algorithm)
+	  4. [An example of benchmark usage](#314-an-example-of-benchmark-usage)
 4. [License](#4-license)
 
 ## 1. Getting Started
@@ -111,7 +112,7 @@ paste it in the `images` folder in the project directory. Rename it to `to_launc
 
 <img src="images/acceleration.png" alt="Graph of acceleration of the parallel algorithm" width="600"/>
 
-#### 3.1.2 An example of benchmark usage
+#### 3.1.4 An example of benchmark usage
 
 <img src="images/benchmark_cout.png" alt="Example of benchmark usage" width="600"/>
 
