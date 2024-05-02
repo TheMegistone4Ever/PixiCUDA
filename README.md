@@ -111,6 +111,10 @@ paste it in the `images` folder in the project directory. Rename it to `to_launc
 
 <img src="images/acceleration.png" alt="Graph of acceleration of the parallel algorithm" width="600"/>
 
+#### 3.1.2 An example of benchmark usage
+
+<img src="images/benchmark_cout.png" alt="Example of benchmark usage" width="600"/>
+
 ## 4 License
 
 The project is licensed under the [CC BY-NC 4.0 License](LICENSE.md).
