@@ -105,6 +105,9 @@ void motion_blur_cpu(
 	const int channels
 )
 {
+	int double_width = 2 * width;
+	int double_height = 2 * height;
+
 	for (int x = 0; x < width; ++x)
 	{
 		for (int y = 0; y < height; ++y)
@@ -119,19 +122,21 @@ void motion_blur_cpu(
 
 				for (int x_kernel = start_kernel_x; x_kernel < start_kernel_x + kernel_size; ++x_kernel)
 				{
-					if (x_kernel < 0 || x_kernel >= width)
+					int reflected_x = abs(x_kernel) % double_width;
+					if (reflected_x >= width)
 					{
-						continue;
+						reflected_x = double_width - reflected_x - 1;
 					}
 
 					for (int y_kernel = start_kernel_y; y_kernel < start_kernel_y + kernel_size; ++y_kernel)
 					{
-						if (y_kernel < 0 || y_kernel >= height)
+						int reflected_y = abs(y_kernel) % double_height;
+						if (reflected_y >= height)
 						{
-							continue;
+							reflected_y = double_height - reflected_y - 1;
 						}
 
-						unsigned char pixel = in_image[(x_kernel + y_kernel * width) * channels + channel];
+						unsigned char pixel = in_image[(reflected_x + reflected_y * width) * channels + channel];
 
 						int kernel_index = (x_kernel - start_kernel_x) + (y_kernel - start_kernel_y) * kernel_size;
 						unsigned char kernel_value = test_bit_cpu(kernel, kernel_index);

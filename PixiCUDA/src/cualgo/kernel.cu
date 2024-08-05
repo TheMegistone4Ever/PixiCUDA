@@ -157,6 +157,8 @@ __global__ void motion_blur_cuda(
     int start_kernel_x = x - kernel_size / 2;
     int start_kernel_y = y - kernel_size / 2;
     int index = (x + y * width) * channels;
+    int double_width = 2 * width;
+    int double_height = 2 * height;
 
     for (int channel = 0; channel < channels; ++channel)
     {
@@ -164,19 +166,21 @@ __global__ void motion_blur_cuda(
 
         for (int x_kernel = start_kernel_x; x_kernel < start_kernel_x + kernel_size; ++x_kernel)
         {
-            if (x_kernel < 0 || x_kernel >= width)
+            int reflected_x = abs(x_kernel) % double_width;
+            if (reflected_x >= width)
             {
-                continue;
+                reflected_x = double_width - reflected_x - 1;
             }
 
             for (int y_kernel = start_kernel_y; y_kernel < start_kernel_y + kernel_size; ++y_kernel)
             {
-                if (y_kernel < 0 || y_kernel >= height)
+                int reflected_y = abs(y_kernel) % double_height;
+                if (reflected_y >= height)
                 {
-                    continue;
+                    reflected_y = double_height - reflected_y - 1;
                 }
 
-                unsigned char pixel = in_image[(x_kernel + y_kernel * width) * channels + channel];
+                unsigned char pixel = in_image[(reflected_x + reflected_y * width) * channels + channel];
 
                 int kernel_index = (x_kernel - start_kernel_x) + (y_kernel - start_kernel_y) * kernel_size;
                 unsigned char kernel_value = test_bit_cuda_device(device_kernel, kernel_index);
