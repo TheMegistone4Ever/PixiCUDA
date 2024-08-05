@@ -44,6 +44,12 @@ int main(int argc, char** argv)
         << ";\n\t- Image width: " << image.cols
         << ";\n\t- Image channels: " << image.channels() << ";\n";
 
+    if (image.rows < BYTE_SIZE || image.cols < BYTE_SIZE)
+    {
+		cerr << RED_BOLD << "Image is too small; Minimum size is " << BYTE_SIZE << "x" << BYTE_SIZE << ";\n";
+		return ERROR_CODE;
+	}
+
     // This is the main window where all the magic happens
     namedWindow(WIN_NAME, WINDOW_NORMAL);
     resizeWindow(WIN_NAME, WIN_WIDTH, WIN_HEIGHT);
