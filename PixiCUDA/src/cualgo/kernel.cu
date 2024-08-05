@@ -72,8 +72,8 @@ void cuda_motion_blur_image(
     unsigned char* device_in_image = nullptr;
     unsigned char* device_out_image = nullptr;
 
-    cudaMalloc((void**)&device_in_image, image_size);
-    cudaMalloc((void**)&device_out_image, image_size);
+    cudaMalloc(reinterpret_cast<void**>(&device_in_image), image_size);
+    cudaMalloc(reinterpret_cast<void**>(&device_out_image), image_size);
     cudaMemset(device_out_image, NULL, image_size);
 
     // Copy the host variables to the device (CPU -> GPU)
