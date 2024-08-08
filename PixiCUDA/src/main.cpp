@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
     fs::path image_path = fs::path(test_images_path) / image_name;
 
-    cout << BLUE_BOLD << "Image path: \"" << image_path << "\"\n";
+    cout << BLUE_BOLD << "Image path: " << image_path << "\n";
     if (!fs::exists(image_path))
     {
         cerr << RED_BOLD << "Could not open or find the image;" << RESET_COLOR << endl;
